@@ -1,0 +1,121 @@
+import CloudinaryProvider from "@providers/CloudinaryProvider";
+import categoryRepository from "@repositories/categoryRepository";
+import {
+  CreateCategoryDTO,
+  CreateCategoryRequest,
+  UpdateCategoryDTO,
+  UpdateCategoryRequest,
+} from "@models/category/dtos/CreateCategory";
+import { BadRequestError } from "@exceptions/BadRequestError";
+import _ from "lodash";
+import { InternalServerError } from "@exceptions/InternalServerError";
+
+class CategoryService {
+  async getAllCategories() {
+    try {
+      const categories = await categoryRepository.getAllCategories();
+      return categories;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async createCategory(category: CreateCategoryRequest) {
+    try {
+      const existingCategory = await categoryRepository.getCategoryByName(
+        category.name
+      );
+
+      if (existingCategory) {
+        throw new BadRequestError(
+          `Category with name: ${category.name} already exists!`
+        );
+      }
+
+      if (category.parentId) {
+        const parentCategory = await categoryRepository.getCategoryById(
+          category.parentId
+        );
+        if (!parentCategory) {
+          throw new BadRequestError("Parent category not found");
+        }
+      }
+
+      if (!category.img) {
+        throw new BadRequestError("Image is required!");
+      }
+
+      const imgUrl = await CloudinaryProvider.uploadImage(
+        category.img.buffer,
+        "categories"
+      );
+
+      const cateCreate: CreateCategoryDTO = {
+        imageUrl: imgUrl,
+        ..._.omit(category, "img"),
+      };
+
+      const newCategory = await categoryRepository.createCategory(cateCreate);
+      return newCategory;
+    } catch (error) {
+      if (error instanceof BadRequestError) {
+        throw error;
+      }
+      throw new InternalServerError(
+        "Failed to create category. Please try again."
+      );
+    }
+  }
+
+  async updateCategory(id: number, category: UpdateCategoryRequest) {
+    try {
+      if (category.name) {
+        const existingCategory = await categoryRepository.getCategoryByName(
+          category.name
+        );
+        if (existingCategory) {
+          throw new BadRequestError(
+            `Category with name: ${category.name} already exists!`
+          );
+        }
+      }
+
+      const previousCategory = await categoryRepository.getCategoryById(id);
+      if (!previousCategory) {
+        throw new BadRequestError("Category not found");
+      }
+
+      if (category.parentId) {
+        const parentCategory = await categoryRepository.getCategoryById(
+          category.parentId
+        );
+        if (!parentCategory) {
+          throw new BadRequestError("Parent category not found");
+        }
+      }
+
+      const cateUpdate: UpdateCategoryDTO = {
+        ..._.omit(category, "img"),
+      };
+
+      if (category.img) {
+        await CloudinaryProvider.deleteImage(previousCategory.imageUrl);
+        const imgUrl = await CloudinaryProvider.uploadImage(
+          category.img.buffer,
+          "categories"
+        );
+        cateUpdate.imageUrl = imgUrl;
+      }
+
+      const updatedCategory = await categoryRepository.updateCategory(
+        id,
+        cateUpdate
+      );
+      return updatedCategory;
+    } catch (error) {
+      throw error;
+    }
+  }
+}
+
+export default new CategoryService();

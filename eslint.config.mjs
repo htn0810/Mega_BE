@@ -1,16 +1,21 @@
-import eslint from '@eslint/js';
-import tseslint from 'typescript-eslint';
+import eslint from "@eslint/js";
+import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   eslint.configs.recommended,
   tseslint.configs.recommended,
   {
     // config with just ignores is the replacement for `.eslintignore`
-    ignores: ['**/build/**', '**/dist/**', '**/node_modules/**', "eslint.config.mjs"],
+    ignores: [
+      "**/build/**",
+      "**/dist/**",
+      "**/node_modules/**",
+      "eslint.config.mjs",
+    ],
   },
   {
     plugins: {
-      '@typescript-eslint': tseslint.plugin,
+      "@typescript-eslint": tseslint.plugin,
     },
     languageOptions: {
       parser: tseslint.parser,
@@ -19,16 +24,29 @@ export default tseslint.config(
       },
     },
     files: ["**/*.{js,mjs,cjs,ts}"],
-    extends: [
-      eslint.configs.recommended,
-      tseslint.configs.recommended,
-    ],
+    extends: [eslint.configs.recommended, tseslint.configs.recommended],
     rules: {
       // "import/no-unresolved": "error",
       "no-console": 1,
       "no-extra-boolean-cast": 0,
       "no-lonely-if": 1,
-      "no-unused-vars": 1,
+      "no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+      "no-useless-catch": 0,
       "no-trailing-spaces": 1,
       "no-multi-spaces": 1,
       "no-multiple-empty-lines": 1,
@@ -44,5 +62,5 @@ export default tseslint.config(
       "comma-spacing": 1,
       "arrow-spacing": 1,
     },
-  },
+  }
 );

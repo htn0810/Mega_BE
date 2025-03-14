@@ -1,10 +1,20 @@
 {
   "compilerOptions": {
-    "target": "es2016",          
-    "module": "commonjs",                               
+    "target": "es2016",
+    "module": "commonjs",
     "baseUrl": "./",
     "paths": {
-      "@configs/*": ["src/configs/*"]
+      "@configs/*": ["src/configs/*"],
+      "@routes/*": ["src/routes/*"],
+      "@utils/*": ["src/utils/*"],
+      "@middlewares/*": ["src/middlewares/*"],
+      "@controllers/*": ["src/controllers/*"],
+      "@services/*": ["src/services/*"],
+      "@repositories/*": ["src/repositories/*"],
+      "@models/*": ["src/models/*"],
+      "@providers/*": ["src/providers/*"],
+      "@exceptions/*": ["src/exceptions/*"],
+      "@validations/*": ["src/validations/*"]
     },
     "outDir": "./dist",
     "esModuleInterop": true,
