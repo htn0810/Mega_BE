@@ -36,13 +36,13 @@ class CloudinaryProvider {
     });
   }
 
-  async deleteImage(imageUrl: string) {
+  async deleteImage(imageUrl: string, folderName: string) {
     try {
       const publicId = imageUrl.split("/").pop()?.split(".")[0];
       if (!publicId) {
         throw new InternalServerError("Failed to delete image from Cloudinary");
       }
-      await this.cloudinary.uploader.destroy(publicId);
+      await this.cloudinary.uploader.destroy(`${folderName}/${publicId}`);
     } catch (_error) {
       throw new InternalServerError("Failed to delete image from Cloudinary");
     }

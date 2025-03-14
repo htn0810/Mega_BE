@@ -9,6 +9,7 @@ import {
 import { BadRequestError } from "@exceptions/BadRequestError";
 import _ from "lodash";
 import { InternalServerError } from "@exceptions/InternalServerError";
+import { CLOUDINARY_FOLDER_NAME } from "@utils/constants";
 
 class CategoryService {
   async getAllCategories() {
@@ -47,7 +48,7 @@ class CategoryService {
 
       const imgUrl = await CloudinaryProvider.uploadImage(
         category.img.buffer,
-        "categories"
+        CLOUDINARY_FOLDER_NAME.CATEGORY
       );
 
       const cateCreate: CreateCategoryDTO = {
@@ -99,10 +100,13 @@ class CategoryService {
       };
 
       if (category.img) {
-        await CloudinaryProvider.deleteImage(previousCategory.imageUrl);
+        await CloudinaryProvider.deleteImage(
+          previousCategory.imageUrl,
+          CLOUDINARY_FOLDER_NAME.CATEGORY
+        );
         const imgUrl = await CloudinaryProvider.uploadImage(
           category.img.buffer,
-          "categories"
+          CLOUDINARY_FOLDER_NAME.CATEGORY
         );
         cateUpdate.imageUrl = imgUrl;
       }
