@@ -1,4 +1,5 @@
 import userController from "@controllers/userController";
+import { authMiddleware } from "@middlewares/auth";
 import { multerUploadMiddleware } from "@middlewares/multerUpload";
 import userValidation from "@validations/userValidation";
 import { Router } from "express";
@@ -19,9 +20,9 @@ router
 
 //   router.route("/refresh_token").get(userController.refreshToken);
 
-// router
-//   .route("/logout")
-//   .post(userController.logout);
+router
+  .route("/logout")
+  .post(authMiddleware.isAuthorized, userController.logout);
 
 // router
 //   .route("/forgot-password")

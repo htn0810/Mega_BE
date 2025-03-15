@@ -58,6 +58,18 @@ class UserController {
       next(error);
     }
   };
+
+  logout = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
+      res.status(StatusCodes.OK).json({
+        message: "Logged out successfully!",
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 const userController = new UserController();

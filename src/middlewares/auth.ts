@@ -1,0 +1,40 @@
+import { env } from "@configs/environments";
+import { BaseError } from "@exceptions/BaseError";
+import { UnauthorizedError } from "@exceptions/UnauthorizedError";
+import jwtProvider from "@providers/JwtProvider";
+import { NextFunction, Request, Response } from "express";
+import { StatusCodes } from "http-status-codes";
+import { JwtPayload } from "jsonwebtoken";
+
+const isAuthorized = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const accessToken = req.cookies.accessToken;
+    if (!accessToken) {
+      next(new UnauthorizedError("Unauthorized"));
+      return;
+    }
+
+    const decoded = (await jwtProvider.verifyToken(
+      accessToken,
+      env.JWT_ACCESS_SIGNATURE_KEY as string
+    )) as JwtPayload;
+
+    req.jwtUser = { name: decoded.name, email: decoded.email };
+    next();
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message.includes("jwt expired")) {
+      next(new BaseError("Need to refresh token!", StatusCodes.GONE));
+      return;
+    }
+    next(new UnauthorizedError("Unauthorized"));
+    return;
+  }
+};
+
+export const authMiddleware = {
+  isAuthorized,
+};
