@@ -1,5 +1,5 @@
 import { GET_DB } from "@configs/database";
-import { RegisterUserDTO } from "@models/user/dtos/RegisterUser";
+import { RegisterLoginUserDTO } from "@models/user/dtos/RegisterLoginUser";
 import { User } from "@models/user/userModel";
 import { v4 as uuidv4 } from "uuid";
 class UserRepository {
@@ -14,7 +14,7 @@ class UserRepository {
     }
   }
 
-  async createUser(userData: RegisterUserDTO) {
+  async createUser(userData: RegisterLoginUserDTO) {
     try {
       const registeredUser = await GET_DB().users.create({
         data: {

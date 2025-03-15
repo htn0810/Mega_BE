@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const RegisterUserRequest = z.object({
+export const RegisterLoginUserRequest = z.object({
   email: z.string({ required_error: "Email is required" }).email({
     message: "Invalid email address",
   }),
@@ -17,4 +17,4 @@ export const RegisterUserRequest = z.object({
     ),
 });
 
-export type RegisterUserDTO = z.infer<typeof RegisterUserRequest>;
+export type RegisterLoginUserDTO = z.infer<typeof RegisterLoginUserRequest>;

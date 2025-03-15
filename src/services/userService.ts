@@ -1,15 +1,14 @@
 import jwtProvider from "@providers/JwtProvider";
 import bcrypt from "bcryptjs";
-import { RegisterUserDTO } from "@models/user/dtos/RegisterUser";
 import userRepository from "@repositories/userRepository";
 import { BadRequestError } from "@exceptions/BadRequestError";
 import _ from "lodash";
 import { env } from "@configs/environments";
 import brevoProvider from "@providers/BrevoProvider";
 import { VerifyUserDTO } from "@models/user/dtos/VerifyUser";
-
+import { RegisterLoginUserDTO } from "@models/user/dtos/RegisterLoginUser";
 class UserService {
-  async register(userData: RegisterUserDTO) {
+  async register(userData: RegisterLoginUserDTO) {
     try {
       const existingUser = await userRepository.getUserByEmail(userData.email);
       if (existingUser) {
@@ -66,6 +65,46 @@ class UserService {
       });
 
       return _.omit(updatedUser, ["password", "id", "verifyToken"]);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async login(userData: RegisterLoginUserDTO) {
+    try {
+      const { email, password } = userData;
+
+      const existingUser = await userRepository.getUserByEmail(email);
+      if (!existingUser) {
+        throw new BadRequestError("Email or password is incorrect!");
+      }
+
+      if (!existingUser.isVerified) {
+        throw new BadRequestError("Please verify your account first!");
+      }
+
+      const isPasswordValid = bcrypt.compareSync(
+        password,
+        existingUser.password
+      );
+      if (!isPasswordValid) {
+        throw new BadRequestError("Email or password is incorrect!");
+      }
+
+      const accessToken = await jwtProvider.generateAccessToken({
+        email,
+        name: existingUser.name,
+      });
+      const refreshToken = await jwtProvider.generateRefreshToken({
+        email,
+        name: existingUser.name,
+      });
+
+      return {
+        loggedInUser: _.omit(existingUser, ["password", "id", "verifyToken"]),
+        accessToken,
+        refreshToken,
+      };
     } catch (error) {
       throw error;
     }

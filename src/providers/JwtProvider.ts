@@ -17,7 +17,7 @@ class JwtProvider {
         expiresIn: ms(env.JWT_ACCESS_TOKEN_EXPIRATION_TIME as StringValue),
         algorithm: "HS256",
       });
-      return { accessToken };
+      return accessToken;
     } catch (_error) {
       throw new Error("Failed to generate access token");
     }
@@ -34,7 +34,7 @@ class JwtProvider {
         expiresIn: ms(env.JWT_REFRESH_TOKEN_EXPIRATION_TIME as StringValue),
         algorithm: "HS256",
       });
-      return { refreshToken };
+      return refreshToken;
     } catch (_error) {
       throw new Error("Failed to generate refresh token");
     }

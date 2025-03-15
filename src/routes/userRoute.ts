@@ -7,18 +7,15 @@ const router = Router();
 
 router
   .route("/register")
-  .post(userValidation.register, userController.register);
+  .post(userValidation.registerOrLogin, userController.register);
 
 router
   .route("/verify")
   .put(userValidation.verifyAccount, userController.verifyAccount);
 
-// router
-//   .route("/login")
-//   .put(
-//     userValidation.login,
-//     userController.login
-//   );
+router
+  .route("/login")
+  .post(userValidation.registerOrLogin, userController.login);
 
 //   router.route("/refresh_token").get(userController.refreshToken);
 
