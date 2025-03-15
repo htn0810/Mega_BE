@@ -7,7 +7,7 @@ import { errorParser } from "@utils/errorParser";
 import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";
 
-export class CategoryValidation {
+class CategoryValidation {
   createCategory = (req: Request, res: Response, next: NextFunction) => {
     try {
       if (req.file) {
@@ -24,6 +24,7 @@ export class CategoryValidation {
         const errorMessage = errorParser(error);
         throw new BadRequestError(errorMessage);
       }
+      next(error);
     }
   };
 
@@ -43,8 +44,11 @@ export class CategoryValidation {
         const errorMessage = errorParser(error);
         throw new BadRequestError(errorMessage);
       }
+      next(error);
     }
   };
 }
 
-export default new CategoryValidation();
+const categoryValidation = new CategoryValidation();
+
+export default categoryValidation;

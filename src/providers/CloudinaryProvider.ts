@@ -49,4 +49,6 @@ class CloudinaryProvider {
   }
 }
 
-export default new CloudinaryProvider();
+const cloudinaryProvider = new CloudinaryProvider();
+
+export default cloudinaryProvider;
