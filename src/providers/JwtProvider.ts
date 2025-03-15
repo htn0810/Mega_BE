@@ -1,6 +1,6 @@
 import { env } from "@configs/environments";
 import { InternalServerError } from "@exceptions/InternalServerError";
-import { UserInfoJwt } from "@models/category/dtos/UserInfoJwt";
+import { UserInfoJwt } from "@models/user/dtos/UserInfoJwt";
 import jwt from "jsonwebtoken";
 import ms, { StringValue } from "ms";
 

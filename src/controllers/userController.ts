@@ -14,6 +14,18 @@ class UserController {
       next(error);
     }
   };
+
+  verifyAccount = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const verifiedUser = await userService.verifyAccount(req.body);
+      res.status(StatusCodes.OK).json({
+        message: "Account verified successfully!",
+        data: verifiedUser,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 const userController = new UserController();

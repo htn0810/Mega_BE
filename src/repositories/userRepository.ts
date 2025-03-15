@@ -1,5 +1,6 @@
 import { GET_DB } from "@configs/database";
 import { RegisterUserDTO } from "@models/user/dtos/RegisterUser";
+import { User } from "@models/user/userModel";
 import { v4 as uuidv4 } from "uuid";
 class UserRepository {
   async getUserByEmail(email: string) {
@@ -24,6 +25,18 @@ class UserRepository {
         },
       });
       return registeredUser;
+    } catch (error) {
+      throw new Error(error as string);
+    }
+  }
+
+  async updateUser(userId: number, userData: Partial<User>) {
+    try {
+      const updatedUser = await GET_DB().users.update({
+        where: { id: userId },
+        data: userData,
+      });
+      return updatedUser;
     } catch (error) {
       throw new Error(error as string);
     }

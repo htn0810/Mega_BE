@@ -9,9 +9,9 @@ router
   .route("/register")
   .post(userValidation.register, userController.register);
 
-// router
-//   .route("/verify")
-//   .post(userValidation.verify, userController.verify);
+router
+  .route("/verify")
+  .put(userValidation.verifyAccount, userController.verifyAccount);
 
 // router
 //   .route("/login")

@@ -6,6 +6,7 @@ import { BadRequestError } from "@exceptions/BadRequestError";
 import _ from "lodash";
 import { env } from "@configs/environments";
 import brevoProvider from "@providers/BrevoProvider";
+import { VerifyUserDTO } from "@models/user/dtos/VerifyUser";
 
 class UserService {
   async register(userData: RegisterUserDTO) {
@@ -37,7 +38,34 @@ class UserService {
         htmlContent
       );
 
-      return _.omit(registeredUser, ["password", "id"]);
+      return _.omit(registeredUser, ["password", "id", "verifyToken"]);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async verifyAccount(userData: VerifyUserDTO) {
+    try {
+      const { email, token } = userData;
+      const existingUser = await userRepository.getUserByEmail(email);
+      if (!existingUser) {
+        throw new BadRequestError(`User with email ${email} not found`);
+      }
+
+      if (existingUser.isVerified || existingUser.verifyToken === null) {
+        throw new BadRequestError("Account already verified");
+      }
+
+      if (existingUser.verifyToken !== token) {
+        throw new BadRequestError("Invalid token");
+      }
+
+      const updatedUser = await userRepository.updateUser(existingUser.id, {
+        isVerified: true,
+        verifyToken: null,
+      });
+
+      return _.omit(updatedUser, ["password", "id", "verifyToken"]);
     } catch (error) {
       throw error;
     }
