@@ -32,6 +32,7 @@ model Users {
   shop Shops[]
   addresses Addresses[]
   isDeleted Boolean @default(false)
+  verifyToken String?
   isVerified Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

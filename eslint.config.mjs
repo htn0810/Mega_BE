@@ -46,6 +46,7 @@ export default tseslint.config(
           caughtErrorsIgnorePattern: "^_",
         },
       ],
+      "@typescript-eslint/no-require-imports": 0,
       "no-useless-catch": 0,
       "no-trailing-spaces": 1,
       "no-multi-spaces": 1,

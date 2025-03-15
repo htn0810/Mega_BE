@@ -1,6 +1,6 @@
 import { GET_DB } from "@configs/database";
 import { RegisterUserDTO } from "@models/user/dtos/RegisterUser";
-
+import { v4 as uuidv4 } from "uuid";
 class UserRepository {
   async getUserByEmail(email: string) {
     try {
@@ -20,6 +20,7 @@ class UserRepository {
           name: userData.email,
           email: userData.email,
           password: userData.password,
+          verifyToken: uuidv4(),
         },
       });
       return registeredUser;

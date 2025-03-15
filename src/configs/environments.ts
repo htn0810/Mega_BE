@@ -5,6 +5,7 @@ dotenv.config();
 export const env = {
   PORT: process.env.PORT,
   HOST_NAME: process.env.HOST_NAME,
+  FE_DOMAIN: process.env.FE_DOMAIN,
   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
   CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
@@ -14,4 +15,7 @@ export const env = {
   JWT_REFRESH_SIGNATURE_KEY: process.env.JWT_REFRESH_SIGNATURE_KEY,
   JWT_REFRESH_TOKEN_EXPIRATION_TIME:
     process.env.JWT_REFRESH_TOKEN_EXPIRATION_TIME,
+  BREVO_API_KEY: process.env.BREVO_API_KEY,
+  ADMIN_EMAIL_ADDRESS: process.env.ADMIN_EMAIL_ADDRESS,
+  ADMIN_EMAIL_NAME: process.env.ADMIN_EMAIL_NAME,
 };
