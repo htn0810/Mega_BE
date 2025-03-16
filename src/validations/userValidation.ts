@@ -1,4 +1,5 @@
 import { BadRequestError } from "@exceptions/BadRequestError";
+import { ForgotPasswordRequest } from "@models/user/dtos/ForgotPasswordRequest";
 import { RegisterLoginUserRequest } from "@models/user/dtos/RegisterLoginUser";
 import { VerifyUserRequest } from "@models/user/dtos/VerifyUser";
 import { errorParser } from "@utils/errorParser";
@@ -23,6 +24,20 @@ class UserValidation {
   verifyAccount = (req: Request, res: Response, next: NextFunction) => {
     try {
       const schema = VerifyUserRequest;
+      schema.parse(req.body);
+      next();
+    } catch (error: unknown) {
+      if (error instanceof ZodError) {
+        const errorMessage = errorParser(error);
+        throw new BadRequestError(errorMessage);
+      }
+      next(error);
+    }
+  };
+
+  forgotPassword = (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const schema = ForgotPasswordRequest;
       schema.parse(req.body);
       next();
     } catch (error: unknown) {

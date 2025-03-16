@@ -7,6 +7,7 @@ import { env } from "@configs/environments";
 import brevoProvider from "@providers/BrevoProvider";
 import { VerifyUserDTO } from "@models/user/dtos/VerifyUser";
 import { RegisterLoginUserDTO } from "@models/user/dtos/RegisterLoginUser";
+import { generateSecurePassword } from "@utils/resetPasswordGenerator";
 class UserService {
   async register(userData: RegisterLoginUserDTO) {
     try {
@@ -105,6 +106,39 @@ class UserService {
         accessToken,
         refreshToken,
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async forgotPassword(email: string) {
+    try {
+      const existingUser = await userRepository.getUserByEmail(email);
+      if (!existingUser) {
+        throw new BadRequestError("User not found");
+      }
+
+      if (existingUser.isDeleted) {
+        throw new BadRequestError("User is deleted! Please contact admin.");
+      }
+
+      const newPassword = generateSecurePassword();
+
+      await userRepository.updateUser(existingUser.id, {
+        password: bcrypt.hashSync(newPassword, 10),
+      });
+
+      const subject = "MEGA_SHOP - Reset your password";
+      const htmlContent = `
+      <h3>Here is your new password:</h3>
+      <h3>${newPassword}</h3>
+      <h5>Please change your password after logging in.</h5>
+      <h3>Sincerely, <br /> - Admin MEGA_SHOP (HTN) - </h3>
+      `;
+
+      await brevoProvider.sendEmail([existingUser.email], subject, htmlContent);
+
+      return;
     } catch (error) {
       throw error;
     }

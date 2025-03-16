@@ -24,9 +24,9 @@ router
   .route("/logout")
   .post(authMiddleware.isAuthorized, userController.logout);
 
-// router
-//   .route("/forgot-password")
-//   .post(userValidation.forgotPassword, userController.forgotPassword);
+router
+  .route("/forgot-password")
+  .put(userValidation.forgotPassword, userController.forgotPassword);
 
 // router.route("/update").put(multerUploadMiddleware.upload.single("avatar"), userValidation.update, userController.update);
 

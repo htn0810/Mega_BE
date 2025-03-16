@@ -70,6 +70,18 @@ class UserController {
       next(error);
     }
   };
+
+  forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email } = req.body;
+      await userService.forgotPassword(email);
+      res.status(StatusCodes.OK).json({
+        message: "Password reset email sent successfully!",
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 const userController = new UserController();
