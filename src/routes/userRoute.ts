@@ -1,6 +1,7 @@
 import userController from "@controllers/userController";
 import { authMiddleware } from "@middlewares/auth";
 import { multerUploadMiddleware } from "@middlewares/multerUpload";
+import { forgotPasswordLimiter } from "@middlewares/rateLimiter";
 import userValidation from "@validations/userValidation";
 import { Router } from "express";
 
@@ -26,7 +27,11 @@ router
 
 router
   .route("/forgot-password")
-  .put(userValidation.forgotPassword, userController.forgotPassword);
+  .put(
+    forgotPasswordLimiter,
+    userValidation.forgotPassword,
+    userController.forgotPassword
+  );
 
 // router.route("/update").put(multerUploadMiddleware.upload.single("avatar"), userValidation.update, userController.update);
 
