@@ -50,7 +50,6 @@ class UserController {
 
   refreshToken = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log("Refresh token controller called");
       const accessToken = await userService.refreshToken(
         req.cookies.refreshToken
       );
