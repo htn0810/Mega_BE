@@ -31,6 +31,7 @@ model Users {
   avatarUrl String?
   shop Shops[]
   addresses Addresses[]
+  roles UserRoles[]
   isDeleted Boolean @default(false)
   verifyToken String?
   isVerified Boolean @default(false)
@@ -53,13 +54,16 @@ model Shops {
 model Roles {
   id Int @id @default(autoincrement())
   name String @unique
+  users UserRoles[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model UserRoles {
   userId Int
+  user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
   roleId Int
+  role Roles @relation(fields: [roleId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   @@id([userId, roleId])

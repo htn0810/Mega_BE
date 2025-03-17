@@ -1,25 +1,44 @@
 import { GET_DB } from "@configs/database";
 import { RegisterLoginUserDTO } from "@models/user/dtos/RegisterLoginUser";
 import { User } from "@models/user/userModel";
+import { formatRole } from "@utils/formatRole";
 import { v4 as uuidv4 } from "uuid";
 class UserRepository {
-  async getUserById(userId: number) {
+  async getUserById(userId: number): Promise<User | null> {
     try {
       const user = await GET_DB().users.findUnique({
         where: { id: userId },
+        include: {
+          roles: {
+            include: {
+              role: true,
+            },
+          },
+        },
       });
-      return user;
+      if (!user) return null;
+      return { ...user, roles: formatRole(user?.roles || []) };
     } catch (error) {
       throw new Error(error as string);
     }
   }
 
-  async getUserByEmail(email: string) {
+  async getUserByEmail(email: string): Promise<User | null> {
     try {
       const user = await GET_DB().users.findUnique({
         where: { email },
+        include: {
+          roles: {
+            include: {
+              role: true,
+            },
+          },
+        },
       });
-      return user;
+
+      if (!user) return null;
+
+      return { ...user, roles: formatRole(user?.roles || []) };
     } catch (error) {
       throw new Error(error as string);
     }
@@ -41,7 +60,10 @@ class UserRepository {
     }
   }
 
-  async updateUser(userId: number, userData: Partial<User>) {
+  async updateUser(
+    userId: number,
+    userData: Partial<Omit<User, "roles">>
+  ): Promise<User | null> {
     try {
       const updatedUser = await GET_DB().users.update({
         where: { id: userId },
