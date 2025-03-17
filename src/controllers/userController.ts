@@ -105,6 +105,21 @@ class UserController {
     }
   };
 
+  updateRoles = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      console.log("🚀 ~ UserController ~ updateRoles= ~ id:", id);
+      const { roles } = req.body;
+      console.log("🚀 ~ UserController ~ updateRoles= ~ roles:", roles);
+      const updatedUser = await userService.updateRoles(parseInt(id), roles);
+      res.status(StatusCodes.OK).json({
+        message: "User roles updated successfully!",
+        data: updatedUser,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
   private setCookies = (
     res: Response,
     accessToken: string,

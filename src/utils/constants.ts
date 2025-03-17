@@ -6,3 +6,5 @@ export const CLOUDINARY_FOLDER_NAME = {
   PRODUCT: "products",
   USER: "users",
 };
+
+export const USER_ROLE_ID = 1;

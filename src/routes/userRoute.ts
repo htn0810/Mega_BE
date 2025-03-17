@@ -42,4 +42,8 @@ router
     userController.update
   );
 
+router
+  .route("/update/roles/:id")
+  .put(authMiddleware.isAuthorized, userController.updateRoles);
+
 export const USER_ROUTER = router;

@@ -15,6 +15,7 @@ import {
 } from "@models/user/dtos/UpdateUserRequest";
 import cloudinaryProvider from "@providers/CloudinaryProvider";
 import { CLOUDINARY_FOLDER_NAME } from "@utils/constants";
+import { Role, RoleModel } from "../models/role/roleModel";
 class UserService {
   async register(userData: RegisterLoginUserDTO) {
     try {
@@ -220,6 +221,23 @@ class UserService {
       );
 
       return _.omit(updatedUser, ["password", "id", "verifyToken"]);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateRoles(userId: number, newRoles: Role[]) {
+    try {
+      const existingUser = await userRepository.getUserById(userId);
+      if (!existingUser) {
+        throw new BadRequestError("User not found");
+      }
+
+      const updatedUser = await userRepository.updateUserRoles(
+        userId,
+        newRoles
+      );
+      return updatedUser;
     } catch (error) {
       throw error;
     }
