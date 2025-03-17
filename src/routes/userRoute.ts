@@ -19,7 +19,7 @@ router
   .route("/login")
   .post(userValidation.registerOrLogin, userController.login);
 
-//   router.route("/refresh_token").get(userController.refreshToken);
+router.route("/refresh-token").get(userController.refreshToken);
 
 router
   .route("/logout")

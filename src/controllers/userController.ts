@@ -34,24 +34,31 @@ class UserController {
       const { loggedInUser, accessToken, refreshToken } =
         await userService.login(req.body);
 
-      res.cookie("accessToken", accessToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        maxAge: ms("2h" as StringValue),
-      });
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        maxAge: ms("15 days" as StringValue),
-      });
+      this.setCookies(res, accessToken, refreshToken);
       res.status(StatusCodes.OK).json({
         message: "Logged in successfully!",
         data: {
           user: loggedInUser,
           accessToken,
           refreshToken,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  refreshToken = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      console.log("Refresh token controller called");
+      const accessToken = await userService.refreshToken(
+        req.cookies.refreshToken
+      );
+      this.setCookies(res, accessToken, req.cookies.refreshToken);
+      res.status(StatusCodes.OK).json({
+        message: "Token refreshed successfully!",
+        data: {
+          accessToken,
         },
       });
     } catch (error) {
@@ -81,6 +88,25 @@ class UserController {
     } catch (error) {
       next(error);
     }
+  };
+
+  private setCookies = (
+    res: Response,
+    accessToken: string,
+    refreshToken: string
+  ) => {
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: ms("2h" as StringValue),
+    });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: ms("15 days" as StringValue),
+    });
   };
 }
 

@@ -14,7 +14,7 @@ class JwtProvider {
         throw new InternalServerError("Something went wrong with JWT!");
       }
       const accessToken = jwt.sign(payload, env.JWT_ACCESS_SIGNATURE_KEY, {
-        expiresIn: ms(env.JWT_ACCESS_TOKEN_EXPIRATION_TIME as StringValue),
+        expiresIn: env.JWT_ACCESS_TOKEN_EXPIRATION_TIME as StringValue,
         algorithm: "HS256",
       });
       return accessToken;
@@ -31,7 +31,7 @@ class JwtProvider {
         throw new InternalServerError("Something went wrong with JWT!");
       }
       const refreshToken = jwt.sign(payload, env.JWT_REFRESH_SIGNATURE_KEY, {
-        expiresIn: ms(env.JWT_REFRESH_TOKEN_EXPIRATION_TIME as StringValue),
+        expiresIn: env.JWT_REFRESH_TOKEN_EXPIRATION_TIME as StringValue,
         algorithm: "HS256",
       });
       return refreshToken;
@@ -43,7 +43,10 @@ class JwtProvider {
     try {
       const decoded = jwt.verify(token, secretKey);
       return decoded;
-    } catch (_error) {
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
       throw new Error("Failed to verify token");
     }
   }

@@ -3,6 +3,7 @@ import { BadRequestError } from "@exceptions/BadRequestError";
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { UnauthorizedError } from "@exceptions/UnauthorizedError";
+import { ResourceGoneError } from "@exceptions/ResourceGoneError";
 
 // error handler middleware
 export const exceptionHandler = (
@@ -14,7 +15,8 @@ export const exceptionHandler = (
   if (
     err instanceof BadRequestError ||
     err instanceof NotFoundError ||
-    err instanceof UnauthorizedError
+    err instanceof UnauthorizedError ||
+    err instanceof ResourceGoneError
   ) {
     res.status(err.status).json({
       message: err.message,

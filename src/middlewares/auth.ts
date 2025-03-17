@@ -1,5 +1,6 @@
 import { env } from "@configs/environments";
 import { BaseError } from "@exceptions/BaseError";
+import { ResourceGoneError } from "@exceptions/ResourceGoneError";
 import { UnauthorizedError } from "@exceptions/UnauthorizedError";
 import jwtProvider from "@providers/JwtProvider";
 import { NextFunction, Request, Response } from "express";
@@ -27,7 +28,7 @@ const isAuthorized = async (
     next();
   } catch (error: unknown) {
     if (error instanceof Error && error.message.includes("jwt expired")) {
-      next(new BaseError("Need to refresh token!", StatusCodes.GONE));
+      next(new ResourceGoneError("Need to refresh token!"));
       return;
     }
     next(new UnauthorizedError("Unauthorized"));

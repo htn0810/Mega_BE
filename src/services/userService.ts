@@ -8,6 +8,7 @@ import brevoProvider from "@providers/BrevoProvider";
 import { VerifyUserDTO } from "@models/user/dtos/VerifyUser";
 import { RegisterLoginUserDTO } from "@models/user/dtos/RegisterLoginUser";
 import { generateSecurePassword } from "@utils/resetPasswordGenerator";
+import { JwtPayload } from "jsonwebtoken";
 class UserService {
   async register(userData: RegisterLoginUserDTO) {
     try {
@@ -106,6 +107,31 @@ class UserService {
         accessToken,
         refreshToken,
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async refreshToken(refreshToken: string) {
+    try {
+      const decodedToken = (await jwtProvider.verifyToken(
+        refreshToken,
+        env.JWT_REFRESH_SIGNATURE_KEY as string
+      )) as JwtPayload;
+
+      const existingUser = await userRepository.getUserByEmail(
+        decodedToken.email
+      );
+      if (!existingUser) {
+        throw new BadRequestError("Refresh token is invalid!");
+      }
+
+      const accessToken = await jwtProvider.generateAccessToken({
+        email: existingUser.email,
+        name: existingUser.name,
+      });
+
+      return accessToken;
     } catch (error) {
       throw error;
     }
