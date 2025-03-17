@@ -33,6 +33,13 @@ router
     userController.forgotPassword
   );
 
-// router.route("/update").put(multerUploadMiddleware.upload.single("avatar"), userValidation.update, userController.update);
+router
+  .route("/update/:id")
+  .put(
+    authMiddleware.isAuthorized,
+    multerUploadMiddleware.upload.single("avatar"),
+    userValidation.update,
+    userController.update
+  );
 
 export const USER_ROUTER = router;

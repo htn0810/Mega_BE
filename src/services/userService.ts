@@ -9,6 +9,12 @@ import { VerifyUserDTO } from "@models/user/dtos/VerifyUser";
 import { RegisterLoginUserDTO } from "@models/user/dtos/RegisterLoginUser";
 import { generateSecurePassword } from "@utils/resetPasswordGenerator";
 import { JwtPayload } from "jsonwebtoken";
+import {
+  UpdateUserDTO,
+  UpdateUserRequest,
+} from "@models/user/dtos/UpdateUserRequest";
+import cloudinaryProvider from "@providers/CloudinaryProvider";
+import { CLOUDINARY_FOLDER_NAME } from "@utils/constants";
 class UserService {
   async register(userData: RegisterLoginUserDTO) {
     try {
@@ -165,6 +171,55 @@ class UserService {
       await brevoProvider.sendEmail([existingUser.email], subject, htmlContent);
 
       return;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async update(userId: number, userData: UpdateUserRequest) {
+    try {
+      const existingUser = await userRepository.getUserById(userId);
+      if (!existingUser) {
+        throw new BadRequestError("User not found");
+      }
+
+      const updateUserData: UpdateUserDTO = {};
+      if (userData.name) {
+        updateUserData.name = userData.name;
+      }
+
+      if (userData.currentPassword && userData.newPassword) {
+        const isPasswordValid = bcrypt.compareSync(
+          userData.currentPassword,
+          existingUser.password
+        );
+        if (!isPasswordValid) {
+          throw new BadRequestError("Current password is incorrect!");
+        }
+
+        updateUserData.password = bcrypt.hashSync(userData.newPassword, 10);
+      }
+
+      if (userData.avatar) {
+        if (existingUser.avatarUrl) {
+          await cloudinaryProvider.deleteImage(
+            existingUser.avatarUrl,
+            CLOUDINARY_FOLDER_NAME.USER
+          );
+        }
+        const imgUrl = await cloudinaryProvider.uploadImage(
+          userData.avatar.buffer,
+          CLOUDINARY_FOLDER_NAME.USER
+        );
+        updateUserData.avatarUrl = imgUrl;
+      }
+
+      const updatedUser = await userRepository.updateUser(
+        userId,
+        updateUserData
+      );
+
+      return _.omit(updatedUser, ["password", "id", "verifyToken"]);
     } catch (error) {
       throw error;
     }

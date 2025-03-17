@@ -89,6 +89,22 @@ class UserController {
     }
   };
 
+  update = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      if (req.file) {
+        req.body.avatar = req.file;
+      }
+      const updatedUser = await userService.update(parseInt(id), req.body);
+      res.status(StatusCodes.OK).json({
+        message: "User updated successfully!",
+        data: updatedUser,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   private setCookies = (
     res: Response,
     accessToken: string,

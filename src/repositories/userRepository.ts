@@ -3,6 +3,17 @@ import { RegisterLoginUserDTO } from "@models/user/dtos/RegisterLoginUser";
 import { User } from "@models/user/userModel";
 import { v4 as uuidv4 } from "uuid";
 class UserRepository {
+  async getUserById(userId: number) {
+    try {
+      const user = await GET_DB().users.findUnique({
+        where: { id: userId },
+      });
+      return user;
+    } catch (error) {
+      throw new Error(error as string);
+    }
+  }
+
   async getUserByEmail(email: string) {
     try {
       const user = await GET_DB().users.findUnique({
