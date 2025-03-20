@@ -1,36 +1,54 @@
-import { CreateProductRequest } from "@models/product/product.type";
+import { TCreateProductRequest } from "@models/product/product.type";
 import cloudinaryProvider from "@providers/CloudinaryProvider";
 import productRepository from "@repositories/productRepository";
 import { CLOUDINARY_FOLDER_NAME } from "@utils/constants";
+
 class ProductService {
   async createProduct(
-    productData: CreateProductRequest,
+    productData: TCreateProductRequest,
     images: Express.Multer.File[]
   ) {
     try {
-      //   let imageUrls = "";
-      //   images.forEach(async (img) => {
-      //     const url = await cloudinaryProvider.uploadImage(
-      //       img.buffer,
-      //       CLOUDINARY_FOLDER_NAME.PRODUCT
-      //     );
-      //     imageUrls += "," + url;
-      //   })
+      // Upload all images to cloudinary
+      const uploadPromises = images.map((image) =>
+        cloudinaryProvider.uploadImage(
+          image.buffer,
+          CLOUDINARY_FOLDER_NAME.PRODUCT
+        )
+      );
+
+      // Wait for all uploads to complete
+      const imageUrls = await Promise.all(uploadPromises);
+
+      // Join the URLs with commas
+      const formattedImageUrls = imageUrls.join(", ");
+
       const product = await productRepository.createProduct({
         ...productData,
-        // imageUrls: imageUrls,
-        imageUrls: "aaa, aaaa",
+        imageUrls: formattedImageUrls,
       });
       return product;
     } catch (error) {
-      console.log("🚀 ~ ProductService ~ error:", error);
+      throw error;
+    }
+  }
+
+  async getProducts(page: number, limit: number) {
+    try {
+      const products = await productRepository.getProducts(page, limit);
+      return products;
+    } catch (error) {
       throw error;
     }
   }
 
   async getProductById(id: number) {
-    const product = await productRepository.getProductById(id);
-    return product;
+    try {
+      const product = await productRepository.getProductById(id);
+      return product;
+    } catch (error) {
+      throw error;
+    }
   }
 }
 

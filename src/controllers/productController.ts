@@ -5,7 +5,6 @@ class ProductController {
   async createProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const images = req.files;
-      console.log("🚀 ~ ProductController ~ createProduct= ~ images:", images);
       const { productData } = req.body;
       const product = await productService.createProduct(
         JSON.parse(productData),
@@ -19,6 +18,23 @@ class ProductController {
       next(error);
     }
   }
+
+  async getProducts(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { page = 1, limit = 10 } = req.query;
+      const products = await productService.getProducts(
+        parseInt(page as string),
+        parseInt(limit as string)
+      );
+      res.status(200).json({
+        message: "Products fetched successfully",
+        data: products,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getProductById(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
