@@ -157,7 +157,6 @@ class ProductRepository {
 
       return transformProduct(product);
     } catch (error) {
-      console.error(`Error fetching product ${productId}:`, error);
       throw new Error("Failed to fetch product");
     }
   }
@@ -190,8 +189,15 @@ class ProductRepository {
         },
       };
     } catch (error) {
-      console.error("Error fetching products:", error);
       throw new Error("Failed to fetch products");
+    }
+  }
+
+  async deleteProduct(productId: number) {
+    try {
+      await GET_DB().products.delete({ where: { id: productId } });
+    } catch (error) {
+      throw new Error(error as string);
     }
   }
 }

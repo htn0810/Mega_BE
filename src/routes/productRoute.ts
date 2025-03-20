@@ -14,7 +14,9 @@ router
     productController.createProduct
   );
 
-router.route("/:id").get(productController.getProductById);
-// .delete(productController.deleteProduct);
+router
+  .route("/:id")
+  .get(productController.getProductById)
+  .delete(productController.deleteProduct);
 
 export const PRODUCT_ROUTER = router;

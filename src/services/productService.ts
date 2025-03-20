@@ -50,6 +50,14 @@ class ProductService {
       throw error;
     }
   }
+
+  async deleteProduct(id: number) {
+    try {
+      await productRepository.deleteProduct(id);
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 const productService = new ProductService();
