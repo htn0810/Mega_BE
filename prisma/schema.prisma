@@ -33,6 +33,7 @@ model Users {
   shop Shops[]
   addresses Addresses[]
   roles UserRoles[]
+  carts Carts[]
   isDeleted Boolean @default(false)
   verifyToken String?
   isVerified Boolean @default(false)
@@ -95,8 +96,30 @@ model Products {
   slug String @unique
   shopId Int
   shop Shops @relation(fields: [shopId], references: [id])
+  cartProducts CartProducts[]
   categoryId Int
   category Categories @relation(fields: [categoryId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Carts {
+  id Int @id @default(autoincrement())
+  userId Int @unique
+  user Users @relation(fields: [userId], references: [id])
+  cartProducts CartProducts[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CartProducts {
+  id Int @id @default(autoincrement())
+  cartId Int @unique
+  cart Carts @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId Int @unique
+  product Products @relation(fields: [productId], references: [id])
+  quantity Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+  
