@@ -17,6 +17,11 @@ router
 router
   .route("/:id")
   .get(productController.getProductById)
+  .put(
+    multerUploadMiddleware.upload.array("images"),
+    productValidation.updateProduct,
+    productController.updateProduct
+  )
   .delete(productController.deleteProduct);
 
 export const PRODUCT_ROUTER = router;

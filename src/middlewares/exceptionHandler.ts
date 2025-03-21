@@ -24,6 +24,7 @@ export const exceptionHandler = (
   } else {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: "Something went wrong",
+      stack: err.stack,
     });
   }
 };

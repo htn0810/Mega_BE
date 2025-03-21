@@ -48,6 +48,27 @@ class ProductController {
     }
   }
 
+  async updateProduct(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const images = req.files as Express.Multer.File[] | undefined;
+      const { productData } = req.body;
+
+      const product = await productService.updateProduct(
+        parseInt(id),
+        JSON.parse(productData),
+        images || []
+      );
+
+      res.status(200).json({
+        message: "Product updated successfully",
+        data: product,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async deleteProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;

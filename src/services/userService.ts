@@ -15,7 +15,7 @@ import {
 } from "@models/user/dtos/UpdateUserRequest";
 import cloudinaryProvider from "@providers/CloudinaryProvider";
 import { CLOUDINARY_FOLDER_NAME } from "@utils/constants";
-import { Role, RoleModel } from "../models/role/roleModel";
+import { Role } from "../models/role/roleModel";
 class UserService {
   async register(userData: RegisterLoginUserDTO) {
     try {

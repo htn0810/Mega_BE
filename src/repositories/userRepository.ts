@@ -48,19 +48,22 @@ class UserRepository {
 
   async createUser(userData: RegisterLoginUserDTO) {
     try {
-      const registeredUser = await GET_DB().users.create({
-        data: {
-          name: userData.email,
-          email: userData.email,
-          password: userData.password,
-          verifyToken: uuidv4(),
-        },
-      });
-      await GET_DB().userRoles.create({
-        data: {
-          userId: registeredUser.id,
-          roleId: USER_ROLE_ID,
-        },
+      const registeredUser = await GET_DB().$transaction(async (tx) => {
+        const user = await tx.users.create({
+          data: {
+            name: userData.email,
+            email: userData.email,
+            password: userData.password,
+            verifyToken: uuidv4(),
+          },
+        });
+        await tx.userRoles.create({
+          data: {
+            userId: user.id,
+            roleId: USER_ROLE_ID,
+          },
+        });
+        return user;
       });
       return registeredUser;
     } catch (error) {
@@ -85,34 +88,37 @@ class UserRepository {
 
   async updateUserRoles(userId: number, roles: Role[]) {
     try {
-      // Delete all existing roles
-      await GET_DB().userRoles.deleteMany({
-        where: { userId },
-      });
+      const updatedUser = await GET_DB().$transaction(async (tx) => {
+        // Delete all existing roles
+        await GET_DB().userRoles.deleteMany({
+          where: { userId },
+        });
 
-      // Create new roles
-      await GET_DB().userRoles.createMany({
-        data: roles.map((role) => ({
-          userId,
-          roleId: role.id,
-        })),
-      });
+        // Create new roles
+        await GET_DB().userRoles.createMany({
+          data: roles.map((role) => ({
+            userId,
+            roleId: role.id,
+          })),
+        });
 
-      // Get the updated user
-      const updatedUser = await GET_DB().users.findUnique({
-        where: { id: userId },
-        include: {
-          roles: {
-            include: {
-              role: true,
+        // Get the updated user
+        const user = await GET_DB().users.findUnique({
+          where: { id: userId },
+          include: {
+            roles: {
+              include: {
+                role: true,
+              },
             },
           },
-        },
-      });
+        });
 
-      if (!updatedUser) {
-        throw new Error("User not found after update");
-      }
+        if (!user) {
+          throw new Error("User not found after update");
+        }
+        return user;
+      });
 
       return { ...updatedUser, roles: formatRole(updatedUser.roles || []) };
     } catch (error) {

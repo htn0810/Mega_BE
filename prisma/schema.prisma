@@ -88,53 +88,15 @@ model Products {
   name String
   description String
   imageUrls String @db.Text
-  shopId Int
-  shop Shops @relation(fields: [shopId], references: [id], onDelete: Cascade)
-  categoryId Int
-  category Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  attributes ProductAttributes[]
-  variants ProductVariants[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ProductAttributes {
-  id Int @id @default(autoincrement())
-  name String
-  productId Int
-  product Products @relation(fields: [productId], references: [id], onDelete: Cascade)
-  values AttributeValues[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-   @@unique([productId, name])
-}
-
-model AttributeValues {
-  id Int @id @default(autoincrement())
-  value String
-  attributeId Int
-  attribute ProductAttributes @relation(fields: [attributeId], references: [id], onDelete: Cascade)
-  variantValues VariantValues[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  @@unique([attributeId, value])
-}
-
-model ProductVariants {
-  id Int @id @default(autoincrement())
   price Float
   stock Int
-  productId Int
-  product Products @relation(fields: [productId], references: [id], onDelete: Cascade)
-  attributeValues VariantValues[]
+  isDeleted Boolean @default(false)
+  rating Float?
+  slug String @unique
+  shopId Int
+  shop Shops @relation(fields: [shopId], references: [id])
+  categoryId Int
+  category Categories @relation(fields: [categoryId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-model VariantValues {
-  variantId Int
-  variant ProductVariants @relation(fields: [variantId], references: [id], onDelete: Cascade)
-  attributeValueId Int
-  attributeValue AttributeValues @relation(fields: [attributeValueId], references: [id], onDelete: Cascade)
-  @@id([variantId, attributeValueId])
 }
