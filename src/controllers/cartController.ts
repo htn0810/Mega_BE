@@ -43,6 +43,71 @@ class CartController {
       next(error);
     }
   }
+
+  async increaseProductQuantity(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { name, email } = req.jwtUser as JwtPayload;
+      const { productId } = req.body;
+
+      const cart = await cartService.increaseProductQuantity(
+        email,
+        parseInt(productId)
+      );
+
+      res.status(StatusCodes.OK).json({
+        message: "Product quantity increased successfully!",
+        data: cart,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async decreaseProductQuantity(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { name, email } = req.jwtUser as JwtPayload;
+      const { productId } = req.body;
+
+      const cart = await cartService.decreaseProductQuantity(
+        email,
+        parseInt(productId)
+      );
+
+      res.status(StatusCodes.OK).json({
+        message: "Product quantity decreased successfully!",
+        data: cart,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async removeProductFromCart(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { name, email } = req.jwtUser as JwtPayload;
+      const { productId } = req.body;
+
+      const cart = await cartService.removeProductFromCart(
+        email,
+        parseInt(productId)
+      );
+
+      res.status(StatusCodes.OK).json({
+        message: "Product removed from cart successfully!",
+        data: cart,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 const cartController = new CartController();

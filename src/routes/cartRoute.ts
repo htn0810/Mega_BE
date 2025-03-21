@@ -10,6 +10,18 @@ router
   .post(authMiddleware.isAuthorized, cartController.addToCart);
 
 router
+  .route("/increase-quantity")
+  .post(authMiddleware.isAuthorized, cartController.increaseProductQuantity);
+
+router
+  .route("/decrease-quantity")
+  .post(authMiddleware.isAuthorized, cartController.decreaseProductQuantity);
+
+router
+  .route("/remove-product")
+  .post(authMiddleware.isAuthorized, cartController.removeProductFromCart);
+
+router
   .route("/:id")
   .delete(authMiddleware.isAuthorized, cartController.deleteCart);
 

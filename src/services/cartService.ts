@@ -68,6 +68,99 @@ class CartService {
       throw error;
     }
   }
+
+  async increaseProductQuantity(email: string, productId: number) {
+    try {
+      const user = await userRepository.getUserByEmail(email);
+      if (!user) {
+        throw new BadRequestError("User not found");
+      }
+
+      const cart = await cartRepository.getCartByUserId(user.id);
+      if (!cart) {
+        throw new BadRequestError("Cart not found");
+      }
+
+      // Find product in cart
+      const productInCart = cart.cartProducts.find(
+        (item) => item.productId === productId
+      );
+
+      if (!productInCart) {
+        throw new BadRequestError("Product not in cart");
+      }
+
+      // Increase product quantity
+      await cartRepository.increaseProductQuantityByOne(cart.id, productId);
+
+      // Get updated cart
+      return await cartRepository.getCartByUserId(user.id);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async decreaseProductQuantity(email: string, productId: number) {
+    try {
+      const user = await userRepository.getUserByEmail(email);
+      if (!user) {
+        throw new BadRequestError("User not found");
+      }
+
+      const cart = await cartRepository.getCartByUserId(user.id);
+      if (!cart) {
+        throw new BadRequestError("Cart not found");
+      }
+
+      // Find product in cart
+      const productInCart = cart.cartProducts.find(
+        (item) => item.productId === productId
+      );
+
+      if (!productInCart) {
+        throw new BadRequestError("Product not in cart");
+      }
+
+      // Decrease product quantity (will be removed if quantity becomes 0)
+      await cartRepository.decreaseProductQuantityByOne(cart.id, productId);
+
+      // Get updated cart
+      return await cartRepository.getCartByUserId(user.id);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async removeProductFromCart(email: string, productId: number) {
+    try {
+      const user = await userRepository.getUserByEmail(email);
+      if (!user) {
+        throw new BadRequestError("User not found");
+      }
+
+      const cart = await cartRepository.getCartByUserId(user.id);
+      if (!cart) {
+        throw new BadRequestError("Cart not found");
+      }
+
+      // Find product in cart
+      const productInCart = cart.cartProducts.find(
+        (item) => item.productId === productId
+      );
+
+      if (!productInCart) {
+        throw new BadRequestError("Product not in cart");
+      }
+
+      // Remove product from cart
+      await cartRepository.deleteProductFromCart(cart.id, productId);
+
+      // Get updated cart
+      return await cartRepository.getCartByUserId(user.id);
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 const cartService = new CartService();
