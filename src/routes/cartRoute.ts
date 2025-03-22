@@ -25,12 +25,4 @@ router
   .route("/:id")
   .delete(authMiddleware.isAuthorized, cartController.deleteCart);
 
-// router
-//   .route("/:id")
-//   .put(
-//     multerUploadMiddleware.upload.single("categoryImg"),
-//     categoryValidation.updateCategory,
-//     categoryController.updateCategory
-//   );
-
 export const CART_ROUTER = router;

@@ -1,5 +1,6 @@
 import { CART_ROUTER } from "@routes/cartRoute";
 import { CATEGORY_ROUTER } from "@routes/categoryRoute";
+import { DISCOUNT_ROUTER } from "@routes/discountRoute";
 import { PRODUCT_ROUTER } from "@routes/productRoute";
 import { USER_ROUTER } from "@routes/userRoute";
 import { Request, Response, Router } from "express";
@@ -14,5 +15,6 @@ router.use("/categories", CATEGORY_ROUTER);
 router.use("/users", USER_ROUTER);
 router.use("/products", PRODUCT_ROUTER);
 router.use("/carts", CART_ROUTER);
+router.use("/discounts", DISCOUNT_ROUTER);
 
 export const API_ROUTER = router;

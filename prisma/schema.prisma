@@ -50,6 +50,7 @@ model Shops {
   userId Int
   user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
   products Products[]
+  discounts Discounts[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -99,6 +100,7 @@ model Products {
   cartProducts CartProducts[]
   categoryId Int
   category Categories @relation(fields: [categoryId], references: [id])
+  discountProducts DiscountProducts[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -123,4 +125,56 @@ model CartProducts {
   updatedAt DateTime @updatedAt
   @@unique([cartId, productId])
 }
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+enum DiscountAppliesTo {
+  ALL
+  SPECIFIC_PRODUCTS
+}
+
+model Discounts {
+  id Int @id @default(autoincrement())
+  shopId Int
+  shop Shops @relation(fields: [shopId], references: [id])
+  name String
+  description String
+  discountCode String @unique
+  discountType DiscountType @default(FIXED)
+  discountValue Float
+  startDate DateTime
+  endDate DateTime
+  isDeleted Boolean @default(false)
+  discountUsage Int @default(0)
+  maxUsage Int
+  minOrderAmount Float
+  discountMaxUsePerUser Int
+  usersUsedDiscount UsersUsedDiscount[]
+  discountAppliesTo DiscountAppliesTo @default(ALL)
+  discountProducts DiscountProducts[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DiscountProducts {
+  id Int @id @default(autoincrement())
+  discountId Int
+  discount Discounts @relation(fields: [discountId], references: [id])
+  productId Int
+  product Products @relation(fields: [productId], references: [id])
+}
+
+model UsersUsedDiscount {
+  id Int @id @default(autoincrement())
+  userId Int
+  discountId Int
+  discount Discounts @relation(fields: [discountId], references: [id])
+  usageCount Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   
+  @@unique([userId, discountId])
+}
