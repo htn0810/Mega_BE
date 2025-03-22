@@ -1,4 +1,5 @@
 import { BadRequestError } from "@exceptions/BadRequestError";
+import { Prisma } from "@prisma/client";
 import cartRepository from "@repositories/cartRepository";
 import userRepository from "@repositories/userRepository";
 
@@ -42,7 +43,9 @@ class CartService {
         productId,
         quantity
       );
-      return await cartRepository.getCartByUserId(user.id);
+      const cartInfo = await cartRepository.getCartByUserId(user.id);
+      const formattedCart = await this.formatCart(cartInfo);
+      return formattedCart;
     } catch (error) {
       throw error;
     }
@@ -54,7 +57,9 @@ class CartService {
       if (!user) {
         throw new BadRequestError("User not found");
       }
-      return await cartRepository.getCartByUserId(user.id);
+      const cartInfo = await cartRepository.getCartByUserId(user.id);
+      const formattedCart = await this.formatCart(cartInfo);
+      return formattedCart;
     } catch (error) {
       throw error;
     }
@@ -94,7 +99,9 @@ class CartService {
       await cartRepository.increaseProductQuantityByOne(cart.id, productId);
 
       // Get updated cart
-      return await cartRepository.getCartByUserId(user.id);
+      const cartInfo = await cartRepository.getCartByUserId(user.id);
+      const formattedCart = await this.formatCart(cartInfo);
+      return formattedCart;
     } catch (error) {
       throw error;
     }
@@ -125,7 +132,9 @@ class CartService {
       await cartRepository.decreaseProductQuantityByOne(cart.id, productId);
 
       // Get updated cart
-      return await cartRepository.getCartByUserId(user.id);
+      const cartInfo = await cartRepository.getCartByUserId(user.id);
+      const formattedCart = await this.formatCart(cartInfo);
+      return formattedCart;
     } catch (error) {
       throw error;
     }
@@ -156,10 +165,51 @@ class CartService {
       await cartRepository.deleteProductFromCart(cart.id, productId);
 
       // Get updated cart
-      return await cartRepository.getCartByUserId(user.id);
+      const cartInfo = await cartRepository.getCartByUserId(user.id);
+      const formattedCart = await this.formatCart(cartInfo);
+      return formattedCart;
     } catch (error) {
       throw error;
     }
+  }
+
+  async formatCart(
+    cart: Prisma.CartsGetPayload<{
+      include: {
+        cartProducts: {
+          include: {
+            product: true;
+          };
+        };
+      };
+    }> | null
+  ) {
+    if (!cart) {
+      return null;
+    }
+    const totalPrice = cart.cartProducts.reduce((acc, item) => {
+      return acc + item.product.price * item.quantity;
+    }, 0);
+    const totalQuantity = cart.cartProducts.reduce((acc, item) => {
+      return acc + item.quantity;
+    }, 0);
+    const formattedCart = {
+      id: cart.id,
+      userId: cart.userId,
+      totalPrice,
+      totalQuantity,
+      cartProducts: cart.cartProducts.map((item) => ({
+        id: item.id,
+        productId: item.productId,
+        quantity: item.quantity,
+        price: item.product.price,
+        name: item.product.name,
+        image: item.product.imageUrls?.split(",")[0],
+        stock: item.product.stock,
+      })),
+    };
+
+    return formattedCart;
   }
 }
 

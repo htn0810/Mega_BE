@@ -1,7 +1,16 @@
 import { GET_DB } from "@configs/database";
+import { Prisma } from "@prisma/client";
 
 class CartRepository {
-  async getCartByUserId(userId: number) {
+  async getCartByUserId(userId: number): Promise<Prisma.CartsGetPayload<{
+    include: {
+      cartProducts: {
+        include: {
+          product: true;
+        };
+      };
+    };
+  }> | null> {
     try {
       const cart = await GET_DB().carts.findUnique({
         where: { userId },
