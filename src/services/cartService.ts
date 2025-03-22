@@ -95,6 +95,10 @@ class CartService {
         throw new BadRequestError("Product not in cart");
       }
 
+      if (productInCart.quantity + 1 > productInCart.product.stock) {
+        throw new BadRequestError("Product quantity is exceeded the stock");
+      }
+
       // Increase product quantity
       await cartRepository.increaseProductQuantityByOne(cart.id, productId);
 
