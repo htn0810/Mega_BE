@@ -55,3 +55,13 @@ export interface ProductResponse {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface ProductDiscount {
+  id: number;
+  name: string;
+  price: number;
+  stock: number;
+  quantity: number;
+  shopId: number;
+  categoryId: number;
+}

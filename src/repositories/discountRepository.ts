@@ -22,6 +22,7 @@ class DiscountRepository {
                 id: true,
               },
             },
+            discountProducts: true,
           },
           skip,
           take: validatedLimit,
@@ -51,6 +52,10 @@ class DiscountRepository {
     try {
       const discount = await GET_DB().discounts.findUnique({
         where: { discountCode },
+        include: {
+          usersUsedDiscount: true,
+          discountProducts: true,
+        },
       });
       return discount;
     } catch (error) {
@@ -120,7 +125,6 @@ class DiscountRepository {
       const discounts = await GET_DB().discounts.findMany({
         where: {
           isDeleted: false,
-          discountAppliesTo: DiscountAppliesTo.ALL,
           shopId,
         },
       });

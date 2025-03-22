@@ -51,6 +51,24 @@ class DiscountController {
       next(error);
     }
   }
+
+  async getDiscountAmount(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { products, discountCode, shopId, userId } = req.body;
+      const discountAmount = await discountService.getDiscountAmount(
+        discountCode,
+        shopId,
+        userId,
+        products
+      );
+      res.status(200).json({
+        message: "Discount amount fetched successfully",
+        data: discountAmount,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 const discountController = new DiscountController();

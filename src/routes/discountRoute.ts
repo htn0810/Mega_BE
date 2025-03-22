@@ -13,6 +13,11 @@ router
     discountController.getAllDiscountsOfProduct
   );
 
+// Get total price of order after discount
+router
+  .route("/amount")
+  .post(authMiddleware.isAuthorized, discountController.getDiscountAmount);
+
 // For Shop owner
 router
   .route("/")
