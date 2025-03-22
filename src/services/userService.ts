@@ -5,17 +5,14 @@ import { BadRequestError } from "@exceptions/BadRequestError";
 import _ from "lodash";
 import { env } from "@configs/environments";
 import brevoProvider from "@providers/BrevoProvider";
-import { VerifyUserDTO } from "@models/user/dtos/VerifyUser";
-import { RegisterLoginUserDTO } from "@models/user/dtos/RegisterLoginUser";
+import { VerifyUserDTO } from "@/types/user/user.type";
+import { RegisterLoginUserDTO } from "@/types/user/user.type";
 import { generateSecurePassword } from "@utils/resetPasswordGenerator";
 import { JwtPayload } from "jsonwebtoken";
-import {
-  UpdateUserDTO,
-  UpdateUserRequest,
-} from "@models/user/dtos/UpdateUserRequest";
+import { UpdateUserDTO, UpdateUserRequest } from "@/types/user/user.type";
 import cloudinaryProvider from "@providers/CloudinaryProvider";
 import { CLOUDINARY_FOLDER_NAME } from "@utils/constants";
-import { Role } from "../models/role/roleModel";
+import { Role } from "@/types/role/role.type";
 class UserService {
   async register(userData: RegisterLoginUserDTO) {
     try {

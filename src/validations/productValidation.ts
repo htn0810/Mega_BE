@@ -1,8 +1,8 @@
-import { BadRequestError } from "@exceptions/BadRequestError";
 import {
   CreateProductRequest,
   UpdateProductRequest,
-} from "@models/product/product.type";
+} from "@/types/product/product.type";
+import { BadRequestError } from "@exceptions/BadRequestError";
 import { errorParser } from "@utils/errorParser";
 import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";

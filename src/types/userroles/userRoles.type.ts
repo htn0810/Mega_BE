@@ -1,4 +1,4 @@
-import { RoleModel } from "@models/role/roleModel";
+import { RoleModel } from "@/types/role/role.type";
 import { z } from "zod";
 
 export const UserRolesModel = z.object({

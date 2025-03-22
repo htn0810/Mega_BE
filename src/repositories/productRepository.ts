@@ -1,5 +1,5 @@
+import { CreateProductDTO } from "@/types/product/product.type";
 import { GET_DB } from "@configs/database";
-import { CreateProductDTO } from "@models/product/product.type";
 
 class ProductRepository {
   async createProduct(productData: CreateProductDTO) {

@@ -1,8 +1,8 @@
+import { UserInfoJwt } from "@/types/user/user.type";
 import { env } from "@configs/environments";
 import { InternalServerError } from "@exceptions/InternalServerError";
-import { UserInfoJwt } from "@models/user/dtos/UserInfoJwt";
 import jwt from "jsonwebtoken";
-import ms, { StringValue } from "ms";
+import { StringValue } from "ms";
 
 class JwtProvider {
   async generateAccessToken(payload: UserInfoJwt) {

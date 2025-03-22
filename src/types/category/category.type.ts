@@ -1,5 +1,16 @@
 import { z } from "zod";
 
+export const CategoryModel = z.object({
+  id: z.number(),
+  name: z.string(),
+  parentId: z.number().optional(),
+  createdAt: z.date(),
+  updatedAt: z.date().optional(),
+});
+
+export type Category = z.infer<typeof CategoryModel>;
+
+// Request
 export const CreateCategoryRequest = z.object({
   name: z.string({ required_error: "Category name is required" }).min(1, {
     message: "Category name cannot be empty",
@@ -12,7 +23,6 @@ export const CreateCategoryRequest = z.object({
     { message: "Please upload an image" }
   ),
 });
-
 export type CreateCategoryRequest = z.infer<typeof CreateCategoryRequest>;
 
 export const CreateCategoryDTO = z.object({
@@ -24,7 +34,6 @@ export const CreateCategoryDTO = z.object({
     .optional(),
   imageUrl: z.string({ required_error: "Image URL is required" }),
 });
-
 export type CreateCategoryDTO = z.infer<typeof CreateCategoryDTO>;
 
 export const UpdateCategoryRequest = z.object({
@@ -39,7 +48,6 @@ export const UpdateCategoryRequest = z.object({
     .optional(),
   img: z.custom<Express.Multer.File>().optional(),
 });
-
 export type UpdateCategoryRequest = z.infer<typeof UpdateCategoryRequest>;
 
 export const UpdateCategoryDTO = z.object({
@@ -54,5 +62,4 @@ export const UpdateCategoryDTO = z.object({
     .optional(),
   imageUrl: z.string().optional(),
 });
-
 export type UpdateCategoryDTO = z.infer<typeof UpdateCategoryDTO>;

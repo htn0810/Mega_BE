@@ -1,8 +1,10 @@
 import { BadRequestError } from "@exceptions/BadRequestError";
-import { ForgotPasswordRequest } from "@models/user/dtos/ForgotPasswordRequest";
-import { RegisterLoginUserRequest } from "@models/user/dtos/RegisterLoginUser";
-import { UpdateUserRequest } from "@models/user/dtos/UpdateUserRequest";
-import { VerifyUserRequest } from "@models/user/dtos/VerifyUser";
+import {
+  ForgotPasswordRequest,
+  RegisterLoginUserRequest,
+  UpdateUserRequest,
+  VerifyUserRequest,
+} from "@/types/user/user.type";
 import { errorParser } from "@utils/errorParser";
 import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";

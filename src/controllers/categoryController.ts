@@ -1,8 +1,8 @@
-import { BadRequestError } from "@exceptions/BadRequestError";
 import {
   CreateCategoryRequest,
   UpdateCategoryRequest,
-} from "@models/category/dtos/CreateCategory";
+} from "@/types/category/category.type";
+import { BadRequestError } from "@exceptions/BadRequestError";
 import categoryService from "@services/categoryService";
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";

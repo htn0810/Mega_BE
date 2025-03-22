@@ -1,8 +1,8 @@
-import { GET_DB } from "@configs/database";
 import {
   CreateCategoryDTO,
   UpdateCategoryDTO,
-} from "@models/category/dtos/CreateCategory";
+} from "@/types/category/category.type";
+import { GET_DB } from "@configs/database";
 
 class CategoryRepository {
   async getAllCategories() {

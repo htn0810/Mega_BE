@@ -1,5 +1,5 @@
+import { TCreateProductRequest } from "@/types/product/product.type";
 import { BadRequestError } from "@exceptions/BadRequestError";
-import { TCreateProductRequest } from "@models/product/product.type";
 import cloudinaryProvider from "@providers/CloudinaryProvider";
 import productRepository from "@repositories/productRepository";
 import { CLOUDINARY_FOLDER_NAME } from "@utils/constants";

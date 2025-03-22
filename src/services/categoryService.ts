@@ -1,15 +1,15 @@
 import CloudinaryProvider from "@providers/CloudinaryProvider";
 import categoryRepository from "@repositories/categoryRepository";
+import { BadRequestError } from "@exceptions/BadRequestError";
+import _ from "lodash";
+import { InternalServerError } from "@exceptions/InternalServerError";
+import { CLOUDINARY_FOLDER_NAME } from "@utils/constants";
 import {
   CreateCategoryDTO,
   CreateCategoryRequest,
   UpdateCategoryDTO,
   UpdateCategoryRequest,
-} from "@models/category/dtos/CreateCategory";
-import { BadRequestError } from "@exceptions/BadRequestError";
-import _ from "lodash";
-import { InternalServerError } from "@exceptions/InternalServerError";
-import { CLOUDINARY_FOLDER_NAME } from "@utils/constants";
+} from "@/types/category/category.type";
 
 class CategoryService {
   async getAllCategories() {

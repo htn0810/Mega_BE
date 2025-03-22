@@ -1,4 +1,4 @@
-import { UserRoles } from "@models/userroles/userRolesModel";
+import { UserRoles } from "@/types/userroles/userRoles.type";
 
 export const formatRole = (roles: UserRoles[]) => {
   const formattedRoles = roles.map((role: UserRoles) => {

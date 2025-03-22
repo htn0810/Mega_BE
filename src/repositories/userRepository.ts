@@ -1,7 +1,6 @@
+import { Role } from "@/types/role/role.type";
+import { RegisterLoginUserDTO, User } from "@/types/user/user.type";
 import { GET_DB } from "@configs/database";
-import { Role } from "@models/role/roleModel";
-import { RegisterLoginUserDTO } from "@models/user/dtos/RegisterLoginUser";
-import { User } from "@models/user/userModel";
 import { USER_ROLE_ID } from "@utils/constants";
 import { formatRole } from "@utils/formatRole";
 import { v4 as uuidv4 } from "uuid";

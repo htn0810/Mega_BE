@@ -1,8 +1,8 @@
-import { BadRequestError } from "@exceptions/BadRequestError";
 import {
   CreateCategoryRequest,
   UpdateCategoryRequest,
-} from "@models/category/dtos/CreateCategory";
+} from "@/types/category/category.type";
+import { BadRequestError } from "@exceptions/BadRequestError";
 import { errorParser } from "@utils/errorParser";
 import { NextFunction, Request, Response } from "express";
 import { ZodError } from "zod";

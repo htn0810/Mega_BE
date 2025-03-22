@@ -14,7 +14,8 @@
       "@models/*": ["src/models/*"],
       "@providers/*": ["src/providers/*"],
       "@exceptions/*": ["src/exceptions/*"],
-      "@validations/*": ["src/validations/*"]
+      "@validations/*": ["src/validations/*"],
+      "@/types/*": ["src/types/*"]
     },
     "outDir": "./dist",
     "esModuleInterop": true,
