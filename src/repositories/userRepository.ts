@@ -15,6 +15,7 @@ class UserRepository {
               role: true,
             },
           },
+          addresses: true,
         },
       });
       if (!user) return null;

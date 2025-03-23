@@ -1,3 +1,4 @@
+import { ADDRESS_ROUTER } from "@routes/addressRoute";
 import { CART_ROUTER } from "@routes/cartRoute";
 import { CATEGORY_ROUTER } from "@routes/categoryRoute";
 import { DISCOUNT_ROUTER } from "@routes/discountRoute";
@@ -16,5 +17,6 @@ router.use("/users", USER_ROUTER);
 router.use("/products", PRODUCT_ROUTER);
 router.use("/carts", CART_ROUTER);
 router.use("/discounts", DISCOUNT_ROUTER);
+router.use("/addresses", ADDRESS_ROUTER);
 
 export const API_ROUTER = router;

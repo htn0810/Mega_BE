@@ -77,10 +77,14 @@ model Addresses {
   id Int @id @default(autoincrement())
   userId Int
   user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
-  address String
-  city String
-  state String
-  country String
+  name String
+  phoneNumber String
+  provinceCode String @db.VarChar(20)
+  province Provinces @relation(fields: [provinceCode], references: [code])
+  districtCode String @db.VarChar(20)
+  district Districts @relation(fields: [districtCode], references: [code])
+  wardCode String @db.VarChar(20)
+  ward Wards @relation(fields: [wardCode], references: [code])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -177,4 +181,82 @@ model UsersUsedDiscount {
   updatedAt DateTime @updatedAt
   
   @@unique([userId, discountId])
+}
+
+
+model AdministrativeRegions {
+  id           Int         @id
+  name         String      @db.VarChar(255)
+  name_en      String      @db.VarChar(255)
+  code_name    String?     @db.VarChar(255)
+  code_name_en String?     @db.VarChar(255)
+  provinces    Provinces[]
+}
+
+model AdministrativeUnits {
+  id            Int         @id
+  full_name     String?     @db.VarChar(255)
+  full_name_en  String?     @db.VarChar(255)
+  short_name    String?     @db.VarChar(255)
+  short_name_en String?     @db.VarChar(255)
+  code_name     String?     @db.VarChar(255)
+  code_name_en  String?     @db.VarChar(255)
+  districts     Districts[]
+  provinces     Provinces[]
+  wards         Wards[]
+}
+
+
+model Districts {
+  code                   String                @id @db.VarChar(20)
+  name                   String                @db.VarChar(255)
+  name_en                String?               @db.VarChar(255)
+  full_name              String?               @db.VarChar(255)
+  full_name_en           String?               @db.VarChar(255)
+  code_name              String?               @db.VarChar(255)
+  province_code          String?               @db.VarChar(20)
+  administrative_unit_id Int?
+  administrative_units   AdministrativeUnits? @relation(fields: [administrative_unit_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  provinces              Provinces?            @relation(fields: [province_code], references: [code], onDelete: NoAction, onUpdate: NoAction)
+  wards                  Wards[]
+  addresses              Addresses[]
+
+  @@index([province_code], map: "idx_districts_province")
+  @@index([administrative_unit_id], map: "idx_districts_unit")
+}
+
+model Provinces {
+  code                     String                  @id @db.VarChar(20)
+  name                     String                  @db.VarChar(255)
+  name_en                  String?                 @db.VarChar(255)
+  full_name                String                  @db.VarChar(255)
+  full_name_en             String?                 @db.VarChar(255)
+  code_name                String?                 @db.VarChar(255)
+  administrative_unit_id   Int?
+  administrative_region_id Int?
+  districts                Districts[]
+  administrative_regions   AdministrativeRegions? @relation(fields: [administrative_region_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  administrative_units     AdministrativeUnits?   @relation(fields: [administrative_unit_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  addresses                Addresses[]
+
+  @@index([administrative_region_id], map: "idx_provinces_region")
+  @@index([administrative_unit_id], map: "idx_provinces_unit")
+}
+
+
+model Wards {
+  code                   String                @id @db.VarChar(20)
+  name                   String                @db.VarChar(255)
+  name_en                String?               @db.VarChar(255)
+  full_name              String?               @db.VarChar(255)
+  full_name_en           String?               @db.VarChar(255)
+  code_name              String?               @db.VarChar(255)
+  district_code          String?               @db.VarChar(20)
+  administrative_unit_id Int?
+  administrative_units   AdministrativeUnits? @relation(fields: [administrative_unit_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  districts              Districts?            @relation(fields: [district_code], references: [code], onDelete: NoAction, onUpdate: NoAction)
+  addresses              Addresses[]
+
+  @@index([district_code], map: "idx_wards_district")
+  @@index([administrative_unit_id], map: "idx_wards_unit")
 }
