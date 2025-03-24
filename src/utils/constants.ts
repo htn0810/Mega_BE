@@ -8,3 +8,5 @@ export const CLOUDINARY_FOLDER_NAME = {
 };
 
 export const USER_ROLE_ID = 1;
+
+export const WHITE_LIST_DOMAINS = ["http://localhost:3000"];
