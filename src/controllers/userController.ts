@@ -138,6 +138,24 @@ class UserController {
       maxAge: ms("15 days" as StringValue),
     });
   };
+
+  changePassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const { currentPassword, newPassword } = req.body;
+      const updatedUser = await userService.changePassword(
+        parseInt(id),
+        currentPassword,
+        newPassword
+      );
+      res.status(StatusCodes.OK).json({
+        message: "Password changed successfully!",
+        data: updatedUser,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 const userController = new UserController();

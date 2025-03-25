@@ -70,7 +70,7 @@ class UserService {
         verifyToken: null,
       });
 
-      return _.omit(updatedUser, ["password", "id", "verifyToken"]);
+      return _.omit(updatedUser, ["password", "verifyToken"]);
     } catch (error) {
       throw error;
     }
@@ -107,7 +107,7 @@ class UserService {
       });
 
       return {
-        loggedInUser: _.omit(existingUser, ["password", "id", "verifyToken"]),
+        loggedInUser: _.omit(existingUser, ["password", "verifyToken"]),
         accessToken,
         refreshToken,
       };
@@ -186,18 +186,6 @@ class UserService {
         updateUserData.name = userData.name;
       }
 
-      if (userData.currentPassword && userData.newPassword) {
-        const isPasswordValid = bcrypt.compareSync(
-          userData.currentPassword,
-          existingUser.password
-        );
-        if (!isPasswordValid) {
-          throw new BadRequestError("Current password is incorrect!");
-        }
-
-        updateUserData.password = bcrypt.hashSync(userData.newPassword, 10);
-      }
-
       if (userData.avatar) {
         if (existingUser.avatarUrl) {
           await cloudinaryProvider.deleteImage(
@@ -217,7 +205,36 @@ class UserService {
         updateUserData
       );
 
-      return _.omit(updatedUser, ["password", "id", "verifyToken"]);
+      return _.omit(updatedUser, ["password", "verifyToken"]);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async changePassword(
+    userId: number,
+    currentPassword: string,
+    newPassword: string
+  ) {
+    try {
+      const existingUser = await userRepository.getUserById(userId);
+      if (!existingUser) {
+        throw new BadRequestError("User not found");
+      }
+
+      const isPasswordValid = bcrypt.compareSync(
+        currentPassword,
+        existingUser.password
+      );
+      if (!isPasswordValid) {
+        throw new BadRequestError("Current password is incorrect!");
+      }
+
+      const updatedUser = await userRepository.updateUser(userId, {
+        password: bcrypt.hashSync(newPassword, 10),
+      });
+
+      return _.omit(updatedUser, ["password", "verifyToken"]);
     } catch (error) {
       throw error;
     }

@@ -43,6 +43,14 @@ router
   );
 
 router
+  .route("/change-password/:id")
+  .put(
+    authMiddleware.isAuthorized,
+    userValidation.changePassword,
+    userController.changePassword
+  );
+
+router
   .route("/update/roles/:id")
   .put(authMiddleware.isAuthorized, userController.updateRoles);
 

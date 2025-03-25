@@ -55,6 +55,13 @@ export const UpdateUserRequest = z.object({
       message: "User name cannot be empty",
     })
     .optional(),
+
+  avatar: z.custom<Express.Multer.File>().optional(),
+});
+
+export type UpdateUserRequest = z.infer<typeof UpdateUserRequest>;
+
+export const ChangePasswordRequest = z.object({
   currentPassword: z
     .string({ required_error: "Password is required" })
     .optional(),
@@ -70,10 +77,8 @@ export const UpdateUserRequest = z.object({
       "Password must contain at least one special character (@$!%*?&)"
     )
     .optional(),
-  avatar: z.custom<Express.Multer.File>().optional(),
 });
-
-export type UpdateUserRequest = z.infer<typeof UpdateUserRequest>;
+export type ChangePasswordRequest = z.infer<typeof ChangePasswordRequest>;
 
 export const UpdateUserDTO = z.object({
   name: z.string().optional(),

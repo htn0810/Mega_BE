@@ -1,10 +1,8 @@
 import { env } from "@configs/environments";
-import { BaseError } from "@exceptions/BaseError";
 import { ResourceGoneError } from "@exceptions/ResourceGoneError";
 import { UnauthorizedError } from "@exceptions/UnauthorizedError";
 import jwtProvider from "@providers/JwtProvider";
 import { NextFunction, Request, Response } from "express";
-import { StatusCodes } from "http-status-codes";
 import { JwtPayload } from "jsonwebtoken";
 
 const isAuthorized = async (

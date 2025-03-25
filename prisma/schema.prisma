@@ -8,9 +8,17 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// MySQL configuration (commented out)
+// datasource db {
+//   provider = "mysql"
+//   url      = env("DATABASE_URL")
+// }
+
+// Supabase PostgreSQL configuration
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Categories {

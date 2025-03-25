@@ -6,7 +6,8 @@ import express, { Express } from "express";
 import cors from "cors";
 import { corsConfig } from "@configs/cors";
 const app: Express = express();
-const port = env.PORT || 3000;
+
+const port = Number(env.PORT) || 3000;
 const hostName = env.HOST_NAME || "localhost";
 
 // Cors config

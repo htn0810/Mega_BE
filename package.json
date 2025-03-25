@@ -1,7 +1,7 @@
 {
-  "name": "Test",
+  "name": "mega-shop-be",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.ts",
   "license": "MIT",
   "scripts": {
     "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",

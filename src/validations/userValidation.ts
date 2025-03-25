@@ -1,5 +1,6 @@
 import { BadRequestError } from "@exceptions/BadRequestError";
 import {
+  ChangePasswordRequest,
   ForgotPasswordRequest,
   RegisterLoginUserRequest,
   UpdateUserRequest,
@@ -58,6 +59,20 @@ class UserValidation {
         req.body.avatar = req.file;
       }
       const schema = UpdateUserRequest;
+      schema.parse(req.body);
+      next();
+    } catch (error: unknown) {
+      if (error instanceof ZodError) {
+        const errorMessage = errorParser(error);
+        throw new BadRequestError(errorMessage);
+      }
+      next(error);
+    }
+  };
+
+  changePassword = (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const schema = ChangePasswordRequest;
       schema.parse(req.body);
       next();
     } catch (error: unknown) {

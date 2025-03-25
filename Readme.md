@@ -9,3 +9,6 @@ copy prisma/schema.prisma prisma/temp-schema.prisma
 -- Pull schema to temp-schema.prisma
 npx prisma db pull --schema=./prisma/temp-schema.prisma
 -- Choose and copy which model we need to schema.prisma
+
+supabase
+name: mega-shop-be
