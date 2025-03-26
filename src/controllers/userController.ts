@@ -1,3 +1,4 @@
+import { UnauthorizedError } from "@exceptions/UnauthorizedError";
 import userService from "@services/userService";
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
@@ -60,8 +61,8 @@ class UserController {
           accessToken,
         },
       });
-    } catch (error) {
-      next(error);
+    } catch (_error) {
+      next(new UnauthorizedError("Please login again!"));
     }
   };
 
