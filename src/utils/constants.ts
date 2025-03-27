@@ -16,5 +16,5 @@ export const USER_ROLE_ID = 1;
 
 export const WHITE_LIST_DOMAINS = [
   "http://localhost:3000",
-  "https://mega-shop-sigma.vercel.app/",
+  "https://mega-shop-sigma.vercel.app",
 ];
