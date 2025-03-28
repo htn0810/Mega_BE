@@ -29,6 +29,18 @@ class AddressService {
 
       await this.checkAddress(address);
 
+      if (address.isDefault) {
+        const defaultAddress = await addressRepository.getDefaultAddress(
+          user.id
+        );
+        if (defaultAddress) {
+          defaultAddress.isDefault = false;
+          await addressRepository.updateAddress(
+            defaultAddress.id,
+            defaultAddress
+          );
+        }
+      }
       const newAddress = await addressRepository.createAddress(
         user.id,
         address
@@ -74,9 +86,25 @@ class AddressService {
     }
   }
 
-  async updateAddress(id: number, address: Address) {
+  async updateAddress(email: string, id: number, address: Address) {
     try {
       await this.checkAddress(address);
+      const user = await userRepository.getUserByEmail(email);
+      if (!user) {
+        throw new BadRequestError("User not found");
+      }
+      if (address.isDefault) {
+        const defaultAddress = await addressRepository.getDefaultAddress(
+          user.id
+        );
+        if (defaultAddress) {
+          defaultAddress.isDefault = false;
+          await addressRepository.updateAddress(
+            defaultAddress.id,
+            defaultAddress
+          );
+        }
+      }
       const updatedAddress = await addressRepository.updateAddress(id, address);
       return updatedAddress;
     } catch (error) {

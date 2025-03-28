@@ -83,7 +83,9 @@ class AddressController {
   async updateAddress(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
+      const { name, email } = req.jwtUser as JwtPayload;
       const address = await addressService.updateAddress(
+        email,
         parseInt(id),
         req.body
       );

@@ -28,6 +28,17 @@ class AddressRepository {
       throw error;
     }
   }
+
+  async getDefaultAddress(userId: number) {
+    try {
+      const defaultAddress = await GET_DB().addresses.findFirst({
+        where: { userId, isDefault: true },
+      });
+      return defaultAddress;
+    } catch (error) {
+      throw error;
+    }
+  }
   async createAddress(userId: number, address: Address) {
     try {
       const newAddress = await GET_DB().addresses.create({
@@ -38,6 +49,8 @@ class AddressRepository {
           provinceCode: address.provinceCode,
           districtCode: address.districtCode,
           wardCode: address.wardCode,
+          street: address.street,
+          isDefault: address.isDefault ?? false,
         },
       });
       return newAddress;
