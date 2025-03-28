@@ -93,7 +93,7 @@ model Addresses {
   district Districts @relation(fields: [districtCode], references: [code])
   wardCode String @db.VarChar(20)
   ward Wards @relation(fields: [wardCode], references: [code])
-  street String
+  street String @db.VarChar(255)
   isDefault Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

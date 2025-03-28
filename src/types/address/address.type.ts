@@ -24,7 +24,7 @@ export const AddressSchema = z.object({
         );
       },
       {
-        message: "Phone number just include number",
+        message: "Phone number is not valid",
       }
     ),
   provinceCode: z.string({
@@ -39,10 +39,14 @@ export const AddressSchema = z.object({
     invalid_type_error: "Ward code must be a string",
     required_error: "Ward code is required",
   }),
-  street: z.string({
-    invalid_type_error: "Street must be a string",
-    required_error: "Street is required",
-  }),
+  street: z
+    .string({
+      invalid_type_error: "Street must be a string",
+      required_error: "Street is required",
+    })
+    .max(255, {
+      message: "Street must be less than 255 characters",
+    }),
   isDefault: z.boolean().optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
