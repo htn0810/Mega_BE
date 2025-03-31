@@ -5,6 +5,17 @@ import {
 import { GET_DB } from "@configs/database";
 
 class CategoryRepository {
+  async getAllCategoriesWithoutPagination() {
+    try {
+      const categories = await GET_DB().categories.findMany({
+        where: { isDeleted: false },
+      });
+      return categories;
+    } catch (error) {
+      throw new Error(error as string);
+    }
+  }
+
   async getAllCategories(page: number, limit: number) {
     const validatedPage = Math.max(1, Math.floor(page));
     const validatedLimit = Math.min(50, Math.max(1, Math.floor(limit)));

@@ -8,6 +8,23 @@ import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 
 class CategoryController {
+  async getAllCategoriesWithoutPagination(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const categories =
+        await categoryService.getAllCategoryWithoutPagination();
+      res.status(StatusCodes.OK).json({
+        message: "Get all categories successfully!",
+        data: categories,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getAllCategories(req: Request, res: Response, next: NextFunction) {
     try {
       let { page = 1, limit = 10 } = req.query;

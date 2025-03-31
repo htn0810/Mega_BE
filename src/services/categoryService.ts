@@ -12,6 +12,16 @@ import {
 } from "@/types/category/category.type";
 
 class CategoryService {
+  async getAllCategoryWithoutPagination() {
+    try {
+      const categories =
+        await categoryRepository.getAllCategoriesWithoutPagination();
+      return categories;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getAllCategories(page: number, limit: number) {
     try {
       const categories = await categoryRepository.getAllCategories(page, limit);
@@ -130,7 +140,13 @@ class CategoryService {
         throw new BadRequestError("Category not found");
       }
 
-      await categoryRepository.deleteCategory(id);
+      await Promise.all([
+        CloudinaryProvider.deleteImage(
+          category.imageUrl,
+          CLOUDINARY_FOLDER_NAME.CATEGORY
+        ),
+        categoryRepository.deleteCategory(id),
+      ]);
     } catch (error) {
       throw error;
     }

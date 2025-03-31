@@ -15,6 +15,8 @@ router
     categoryController.createCategory
   );
 
+router.route("/all").get(categoryController.getAllCategoriesWithoutPagination);
+
 router
   .route("/:id")
   .put(
