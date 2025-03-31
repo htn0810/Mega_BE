@@ -62,6 +62,22 @@ class CategoryController {
       next(error);
     }
   }
+
+  async deleteCategory(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        throw new BadRequestError("Category id is required");
+      }
+
+      await categoryService.deleteCategory(parseInt(id));
+      res.status(StatusCodes.OK).json({
+        message: "Delete category successfully!",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 const categoryController = new CategoryController();

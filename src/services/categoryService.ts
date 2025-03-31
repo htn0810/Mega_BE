@@ -59,6 +59,7 @@ class CategoryService {
       const newCategory = await categoryRepository.createCategory(cateCreate);
       return newCategory;
     } catch (error) {
+      console.log("🚀 ~ CategoryService ~ createCategory ~ error:", error);
       if (error instanceof BadRequestError) {
         throw error;
       }
@@ -116,6 +117,19 @@ class CategoryService {
         cateUpdate
       );
       return updatedCategory;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteCategory(id: number) {
+    try {
+      const category = await categoryRepository.getCategoryById(id);
+      if (!category) {
+        throw new BadRequestError("Category not found");
+      }
+
+      await categoryRepository.deleteCategory(id);
     } catch (error) {
       throw error;
     }

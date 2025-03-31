@@ -33,6 +33,11 @@ class AddressRepository {
     try {
       const defaultAddress = await GET_DB().addresses.findFirst({
         where: { userId, isDefault: true },
+        include: {
+          province: true,
+          district: true,
+          ward: true,
+        },
       });
       return defaultAddress;
     } catch (error) {
@@ -63,7 +68,15 @@ class AddressRepository {
     try {
       const updatedAddress = await GET_DB().addresses.update({
         where: { id },
-        data: address,
+        data: {
+          name: address.name,
+          phoneNumber: address.phoneNumber,
+          provinceCode: address.provinceCode,
+          districtCode: address.districtCode,
+          wardCode: address.wardCode,
+          street: address.street,
+          isDefault: address.isDefault ?? false,
+        },
       });
       return updatedAddress;
     } catch (error) {

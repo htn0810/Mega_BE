@@ -39,7 +39,11 @@ class CategoryRepository {
   async createCategory(category: CreateCategoryDTO) {
     try {
       const newCategory = await GET_DB().categories.create({
-        data: category,
+        data: {
+          name: category.name,
+          imageUrl: category.imageUrl,
+          parentId: category.parentId ?? null,
+        },
       });
       return newCategory;
     } catch (error) {
@@ -51,9 +55,21 @@ class CategoryRepository {
     try {
       const updatedCategory = await GET_DB().categories.update({
         where: { id },
-        data: category,
+        data: {
+          name: category.name,
+          imageUrl: category.imageUrl,
+          parentId: category.parentId ?? null,
+        },
       });
       return updatedCategory;
+    } catch (error) {
+      throw new Error(error as string);
+    }
+  }
+
+  async deleteCategory(id: number) {
+    try {
+      await GET_DB().categories.delete({ where: { id } });
     } catch (error) {
       throw new Error(error as string);
     }
