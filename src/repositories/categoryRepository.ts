@@ -15,8 +15,15 @@ class CategoryRepository {
         GET_DB().categories.findMany({
           skip,
           take: validatedLimit,
+          where: {
+            isDeleted: false,
+          },
         }),
-        GET_DB().categories.count(),
+        GET_DB().categories.count({
+          where: {
+            isDeleted: false,
+          },
+        }),
       ]);
 
       return {
@@ -36,7 +43,7 @@ class CategoryRepository {
   async getCategoryById(id: number) {
     try {
       const category = await GET_DB().categories.findUnique({
-        where: { id },
+        where: { id, isDeleted: false },
       });
       return category;
     } catch (error) {
@@ -47,7 +54,7 @@ class CategoryRepository {
   async getCategoryByName(name: string) {
     try {
       const category = await GET_DB().categories.findUnique({
-        where: { name },
+        where: { name, isDeleted: false },
       });
       return category;
     } catch (error) {
@@ -88,7 +95,12 @@ class CategoryRepository {
 
   async deleteCategory(id: number) {
     try {
-      await GET_DB().categories.delete({ where: { id } });
+      await GET_DB().categories.update({
+        where: { id },
+        data: {
+          isDeleted: true,
+        },
+      });
     } catch (error) {
       throw new Error(error as string);
     }
