@@ -5,10 +5,29 @@ import {
 import { GET_DB } from "@configs/database";
 
 class CategoryRepository {
-  async getAllCategories() {
+  async getAllCategories(page: number, limit: number) {
+    const validatedPage = Math.max(1, Math.floor(page));
+    const validatedLimit = Math.min(50, Math.max(1, Math.floor(limit)));
+    const skip = (validatedPage - 1) * validatedLimit;
+
     try {
-      const categories = await GET_DB().categories.findMany();
-      return categories;
+      const [categories, total] = await Promise.all([
+        GET_DB().categories.findMany({
+          skip,
+          take: validatedLimit,
+        }),
+        GET_DB().categories.count(),
+      ]);
+
+      return {
+        categories: categories,
+        pagination: {
+          page: validatedPage,
+          limit: validatedLimit,
+          total,
+          totalPages: Math.ceil(total / validatedLimit),
+        },
+      };
     } catch (error) {
       throw new Error(error as string);
     }

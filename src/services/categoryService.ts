@@ -12,9 +12,10 @@ import {
 } from "@/types/category/category.type";
 
 class CategoryService {
-  async getAllCategories() {
+  async getAllCategories(page: number, limit: number) {
     try {
-      const categories = await categoryRepository.getAllCategories();
+      const categories = await categoryRepository.getAllCategories(page, limit);
+
       return categories;
     } catch (error) {
       throw error;

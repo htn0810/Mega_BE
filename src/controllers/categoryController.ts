@@ -10,7 +10,17 @@ import { StatusCodes } from "http-status-codes";
 class CategoryController {
   async getAllCategories(req: Request, res: Response, next: NextFunction) {
     try {
-      const categories = await categoryService.getAllCategories();
+      let { page = 1, limit = 10 } = req.query;
+      if (!page) {
+        page = 1;
+      }
+      if (!limit) {
+        limit = 5;
+      }
+      const categories = await categoryService.getAllCategories(
+        parseInt(page as string),
+        parseInt(limit as string)
+      );
       res.status(StatusCodes.OK).json({
         message: "Get all categories successfully!",
         data: categories,

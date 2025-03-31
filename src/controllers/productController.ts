@@ -21,7 +21,13 @@ class ProductController {
 
   async getProducts(req: Request, res: Response, next: NextFunction) {
     try {
-      const { page = 1, limit = 10 } = req.query;
+      let { page = 1, limit = 10 } = req.query;
+      if (!page) {
+        page = 1;
+      }
+      if (!limit) {
+        limit = 10;
+      }
       const products = await productService.getProducts(
         parseInt(page as string),
         parseInt(limit as string)
