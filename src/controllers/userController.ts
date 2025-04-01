@@ -6,6 +6,28 @@ import { StringValue } from "ms";
 import ms from "ms";
 
 class UserController {
+  getUsers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      let { page = 1, limit = 10 } = req.query;
+      if (!page) {
+        page = 1;
+      }
+      if (!limit) {
+        limit = 10;
+      }
+      const users = await userService.getUsers(
+        parseInt(page as string),
+        parseInt(limit as string)
+      );
+      res.status(StatusCodes.OK).json({
+        message: "Users fetched successfully!",
+        data: users,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   register = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const registeredUser = await userService.register(req.body);
@@ -152,6 +174,32 @@ class UserController {
       res.status(StatusCodes.OK).json({
         message: "Password changed successfully!",
         data: updatedUser,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  disableUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const disabledUser = await userService.disableUser(parseInt(id));
+      res.status(StatusCodes.OK).json({
+        message: "User disabled successfully!",
+        data: disabledUser,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  enableUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const enabledUser = await userService.enableUser(parseInt(id));
+      res.status(StatusCodes.OK).json({
+        message: "User enabled successfully!",
+        data: enabledUser,
       });
     } catch (error) {
       next(error);

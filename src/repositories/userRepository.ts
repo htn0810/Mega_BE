@@ -3,8 +3,42 @@ import { RegisterLoginUserDTO, User } from "@/types/user/user.type";
 import { GET_DB } from "@configs/database";
 import { USER_ROLE_ID } from "@utils/constants";
 import { formatRole } from "@utils/formatRole";
+import _ from "lodash";
 import { v4 as uuidv4 } from "uuid";
 class UserRepository {
+  async getUsers(page: number, limit: number) {
+    const validatedPage = Math.max(1, Math.floor(page));
+    const validatedLimit = Math.min(50, Math.max(1, Math.floor(limit)));
+    const skip = (validatedPage - 1) * validatedLimit;
+    try {
+      const [users, total] = await Promise.all([
+        GET_DB().users.findMany({
+          include: {
+            roles: {
+              include: {
+                role: true,
+              },
+            },
+            shop: true,
+          },
+          skip,
+          take: validatedLimit,
+        }),
+        GET_DB().users.count(),
+      ]);
+      return {
+        users: users.map((user) => _.omit(user, ["password", "verifyToken"])),
+        pagination: {
+          page: validatedPage,
+          limit: validatedLimit,
+          total,
+          totalPages: Math.ceil(total / validatedLimit),
+        },
+      };
+    } catch (error) {
+      throw new Error(error as string);
+    }
+  }
   async getUserById(userId: number): Promise<User | null> {
     try {
       const user = await GET_DB().users.findUnique({
@@ -121,6 +155,30 @@ class UserRepository {
       });
 
       return { ...updatedUser, roles: formatRole(updatedUser.roles || []) };
+    } catch (error) {
+      throw new Error(error as string);
+    }
+  }
+
+  async disableUser(userId: number) {
+    try {
+      const disabledUser = await GET_DB().users.update({
+        where: { id: userId },
+        data: { isDeleted: true },
+      });
+      return _.omit(disabledUser, ["password", "verifyToken"]);
+    } catch (error) {
+      throw new Error(error as string);
+    }
+  }
+
+  async enableUser(userId: number) {
+    try {
+      const enabledUser = await GET_DB().users.update({
+        where: { id: userId },
+        data: { isDeleted: false },
+      });
+      return _.omit(enabledUser, ["password", "verifyToken"]);
     } catch (error) {
       throw new Error(error as string);
     }

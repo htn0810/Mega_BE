@@ -14,6 +14,14 @@ import cloudinaryProvider from "@providers/CloudinaryProvider";
 import { CLOUDINARY_FOLDER_NAME } from "@utils/constants";
 import { Role } from "@/types/role/role.type";
 class UserService {
+  async getUsers(page: number, limit: number) {
+    try {
+      const users = await userRepository.getUsers(page, limit);
+      return users;
+    } catch (error) {
+      throw error;
+    }
+  }
   async register(userData: RegisterLoginUserDTO) {
     try {
       const existingUser = await userRepository.getUserByEmail(userData.email);
@@ -252,6 +260,35 @@ class UserService {
         newRoles
       );
       return updatedUser;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async disableUser(userId: number) {
+    try {
+      const existingUser = await userRepository.getUserById(userId);
+      if (!existingUser) {
+        throw new BadRequestError("User not found");
+      }
+
+      const disabledUser = await userRepository.disableUser(userId);
+
+      return disabledUser;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async enableUser(userId: number) {
+    try {
+      const existingUser = await userRepository.getUserById(userId);
+      if (!existingUser) {
+        throw new BadRequestError("User not found");
+      }
+
+      const enabledUser = await userRepository.enableUser(userId);
+      return enabledUser;
     } catch (error) {
       throw error;
     }

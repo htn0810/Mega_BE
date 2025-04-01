@@ -7,6 +7,8 @@ import { Router } from "express";
 
 const router = Router();
 
+router.route("/").get(authMiddleware.isAuthorized, userController.getUsers);
+
 router
   .route("/register")
   .post(userValidation.registerOrLogin, userController.register);
@@ -53,5 +55,13 @@ router
 router
   .route("/update/roles/:id")
   .put(authMiddleware.isAuthorized, userController.updateRoles);
+
+router
+  .route("/disable/:id")
+  .put(authMiddleware.isAuthorized, userController.disableUser);
+
+router
+  .route("/enable/:id")
+  .put(authMiddleware.isAuthorized, userController.enableUser);
 
 export const USER_ROUTER = router;
