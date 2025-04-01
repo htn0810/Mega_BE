@@ -50,6 +50,12 @@ model Users {
   updatedAt DateTime @updatedAt
 }
 
+enum ShopStatus {
+  ACTIVE
+  PENDING
+  DISABLED
+}
+
 model Shops {
   id Int @id @default(autoincrement())
   name String
@@ -58,6 +64,7 @@ model Shops {
   description String?
   userId Int @unique
   user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status ShopStatus @default(PENDING)
   products Products[]
   discounts Discounts[]
   createdAt DateTime @default(now())
