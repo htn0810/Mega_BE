@@ -6,13 +6,20 @@ import { formatRole } from "@utils/formatRole";
 import _ from "lodash";
 import { v4 as uuidv4 } from "uuid";
 class UserRepository {
-  async getUsers(page: number, limit: number) {
+  async getUsers(page: number, limit: number, status: string) {
+    let condition = {};
+    if (status.toLowerCase() === "disabled") {
+      condition = { isDeleted: true };
+    } else if (status.toLowerCase() === "active") {
+      condition = { isDeleted: false };
+    }
     const validatedPage = Math.max(1, Math.floor(page));
     const validatedLimit = Math.min(50, Math.max(1, Math.floor(limit)));
     const skip = (validatedPage - 1) * validatedLimit;
     try {
       const [users, total] = await Promise.all([
         GET_DB().users.findMany({
+          where: condition,
           include: {
             roles: {
               include: {
@@ -24,7 +31,9 @@ class UserRepository {
           skip,
           take: validatedLimit,
         }),
-        GET_DB().users.count(),
+        GET_DB().users.count({
+          where: condition,
+        }),
       ]);
       return {
         users: users.map((user) => _.omit(user, ["password", "verifyToken"])),

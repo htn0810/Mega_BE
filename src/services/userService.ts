@@ -14,9 +14,9 @@ import cloudinaryProvider from "@providers/CloudinaryProvider";
 import { CLOUDINARY_FOLDER_NAME } from "@utils/constants";
 import { Role } from "@/types/role/role.type";
 class UserService {
-  async getUsers(page: number, limit: number) {
+  async getUsers(page: number, limit: number, status: string) {
     try {
-      const users = await userRepository.getUsers(page, limit);
+      const users = await userRepository.getUsers(page, limit, status);
       return users;
     } catch (error) {
       throw error;

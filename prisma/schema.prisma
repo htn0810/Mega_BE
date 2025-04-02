@@ -54,6 +54,7 @@ enum ShopStatus {
   ACTIVE
   PENDING
   DISABLED
+  REJECTED
 }
 
 model Shops {

@@ -8,16 +8,20 @@ import ms from "ms";
 class UserController {
   getUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      let { page = 1, limit = 10 } = req.query;
+      let { page = 1, limit = 10, status = "all" } = req.query;
       if (!page) {
         page = 1;
       }
       if (!limit) {
         limit = 10;
       }
+      if (!status) {
+        status = "all";
+      }
       const users = await userService.getUsers(
         parseInt(page as string),
-        parseInt(limit as string)
+        parseInt(limit as string),
+        status as string
       );
       res.status(StatusCodes.OK).json({
         message: "Users fetched successfully!",
