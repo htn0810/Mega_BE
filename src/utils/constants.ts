@@ -18,3 +18,5 @@ export const WHITE_LIST_DOMAINS = [
   "http://localhost:3000",
   "https://mega-shop-sigma.vercel.app",
 ];
+
+export type QueryType = "all" | "paginate";

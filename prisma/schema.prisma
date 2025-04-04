@@ -115,6 +115,7 @@ model Products {
   imageUrls String @db.Text
   price Float
   stock Int
+  isActive Boolean @default(true)
   isDeleted Boolean @default(false)
   rating Float?
   slug String @unique

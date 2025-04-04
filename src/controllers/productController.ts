@@ -86,6 +86,30 @@ class ProductController {
       next(error);
     }
   }
+
+  async disableProduct(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      await productService.disableProduct(parseInt(id));
+      res.status(200).json({
+        message: "Product disabled successfully",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async enableProduct(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      await productService.enableProduct(parseInt(id));
+      res.status(200).json({
+        message: "Product enabled successfully",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 const productController = new ProductController();

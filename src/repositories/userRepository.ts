@@ -83,7 +83,24 @@ class UserRepository {
 
       if (!user) return null;
 
-      return { ...user, roles: formatRole(user?.roles || []) };
+      return {
+        ...user,
+        roles: formatRole(user?.roles || []),
+      };
+    } catch (error) {
+      throw new Error(error as string);
+    }
+  }
+
+  async getShopByUserEmail(email: string) {
+    try {
+      const user = await GET_DB().users.findUnique({
+        where: { email },
+        include: {
+          shop: true,
+        },
+      });
+      return user?.shop;
     } catch (error) {
       throw new Error(error as string);
     }
@@ -116,7 +133,7 @@ class UserRepository {
 
   async updateUser(
     userId: number,
-    userData: Partial<Omit<User, "roles">>
+    userData: Partial<Omit<User, "roles" | "shop">>
   ): Promise<User | null> {
     try {
       const updatedUser = await GET_DB().users.update({

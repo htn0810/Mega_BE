@@ -1,4 +1,5 @@
 import productController from "@controllers/productController";
+import { authMiddleware } from "@middlewares/auth";
 import { multerUploadMiddleware } from "@middlewares/multerUpload";
 import productValidation from "@validations/productValidation";
 import { Router } from "express";
@@ -23,5 +24,12 @@ router
     productController.updateProduct
   )
   .delete(productController.deleteProduct);
+
+router
+  .route("/disable/:id")
+  .put(authMiddleware.isAuthorized, productController.disableProduct);
+router
+  .route("/enable/:id")
+  .put(authMiddleware.isAuthorized, productController.enableProduct);
 
 export const PRODUCT_ROUTER = router;

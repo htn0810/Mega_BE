@@ -8,6 +8,16 @@ router.route("/").get(authMiddleware.isAuthorized, shopController.getAllShops);
 
 // router.route("/register").post(authMiddleware.isAuthorized, shopController.registerShop);
 
+// For User
+router
+  .route("/:id/products")
+  .get(authMiddleware.isAuthorized, shopController.getProductsByShopId);
+
+// For Admin
+router
+  .route("/admin/:id/products")
+  .get(authMiddleware.isAuthorized, shopController.getProductsByShopIdForAdmin);
+
 router
   .route("/disable/:id")
   .put(authMiddleware.isAuthorized, shopController.disableShop);

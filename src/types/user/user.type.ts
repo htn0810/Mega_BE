@@ -1,4 +1,5 @@
 import { RoleModel } from "@/types/role/role.type";
+import { ShopModel } from "@/types/shop/shop.type";
 import { z } from "zod";
 
 export const UserModel = z.object({
@@ -13,6 +14,7 @@ export const UserModel = z.object({
   createdAt: z.date(),
   updatedAt: z.date().optional(),
   roles: z.array(RoleModel).optional(),
+  shop: ShopModel.optional(),
 });
 
 export type User = z.infer<typeof UserModel>;

@@ -1,5 +1,6 @@
 import { GET_DB } from "@configs/database";
 import { Shops, ShopStatus } from "@prisma/client";
+import { QueryType } from "@utils/constants";
 
 class ShopRepository {
   async getAllShops(page: number, limit: number, status: string) {
@@ -42,6 +43,56 @@ class ShopRepository {
         where: { id },
       });
       return shop;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getProductsByShopId(id: number) {
+    try {
+      const products = await GET_DB().products.findMany({
+        where: {
+          shopId: id,
+          isDeleted: false,
+          isActive: true,
+        },
+      });
+      return products;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getProductsByShopIdForAdmin(id: number, page: number, limit: number) {
+    try {
+      const validatedPage = Math.max(1, Math.floor(page));
+      const validatedLimit = Math.min(50, Math.max(1, Math.floor(limit)));
+      const skip = (validatedPage - 1) * validatedLimit;
+      const [products, total] = await Promise.all([
+        GET_DB().products.findMany({
+          where: {
+            shopId: id,
+            isDeleted: false,
+          },
+          skip,
+          take: validatedLimit,
+        }),
+        GET_DB().products.count({
+          where: {
+            shopId: id,
+            isDeleted: false,
+          },
+        }),
+      ]);
+      return {
+        products: products,
+        pagination: {
+          page: validatedPage,
+          limit: validatedLimit,
+          total: total,
+          totalPages: Math.ceil(total / validatedLimit),
+        },
+      };
     } catch (error) {
       throw error;
     }

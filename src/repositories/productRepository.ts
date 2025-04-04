@@ -73,7 +73,12 @@ class ProductRepository {
 
   async deleteProduct(productId: number) {
     try {
-      await GET_DB().products.delete({ where: { id: productId } });
+      await GET_DB().products.update({
+        where: { id: productId },
+        data: {
+          isDeleted: true,
+        },
+      });
       return { success: true };
     } catch (error) {
       throw new Error(`Failed to delete product: ${error}`);
@@ -111,8 +116,33 @@ class ProductRepository {
 
       return updatedProduct;
     } catch (error) {
-      console.error("Product update failed:", error);
       throw new Error("Failed to update product");
+    }
+  }
+
+  async enableProduct(productId: number) {
+    try {
+      await GET_DB().products.update({
+        where: { id: productId },
+        data: {
+          isActive: true,
+        },
+      });
+    } catch (error) {
+      throw new Error("Failed to enable product");
+    }
+  }
+
+  async disableProduct(productId: number) {
+    try {
+      await GET_DB().products.update({
+        where: { id: productId },
+        data: {
+          isActive: false,
+        },
+      });
+    } catch (error) {
+      throw new Error("Failed to disable product");
     }
   }
 }

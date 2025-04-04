@@ -9,6 +9,7 @@ class ProductService {
     productData: TCreateProductRequest,
     images: Express.Multer.File[]
   ) {
+    let imageUrls: string[] = [];
     try {
       // Upload all images to cloudinary
       const uploadPromises = images.map((image) =>
@@ -19,7 +20,7 @@ class ProductService {
       );
 
       // Wait for all uploads to complete
-      const imageUrls = await Promise.all(uploadPromises);
+      imageUrls = await Promise.all(uploadPromises);
 
       // Join the URLs with commas
       const formattedImageUrls = imageUrls.join(", ");
@@ -30,6 +31,12 @@ class ProductService {
       });
       return product;
     } catch (error) {
+      imageUrls.forEach((imageUrl) => {
+        cloudinaryProvider.deleteImage(
+          imageUrl,
+          CLOUDINARY_FOLDER_NAME.PRODUCT
+        );
+      });
       throw error;
     }
   }
@@ -57,6 +64,7 @@ class ProductService {
     productData: TCreateProductRequest,
     images: Express.Multer.File[]
   ) {
+    let newImageUrls: string[] = [];
     try {
       const existingProduct = await productRepository.getProductById(id);
       if (!existingProduct) {
@@ -87,7 +95,7 @@ class ProductService {
         );
 
         // Wait for all uploads to complete
-        const newImageUrls = await Promise.all(uploadPromises);
+        newImageUrls = await Promise.all(uploadPromises);
 
         // Join the URLs with commas
         formattedImageUrls = newImageUrls.join(", ");
@@ -101,6 +109,12 @@ class ProductService {
 
       return product;
     } catch (error) {
+      newImageUrls.forEach((imageUrl) => {
+        cloudinaryProvider.deleteImage(
+          imageUrl,
+          CLOUDINARY_FOLDER_NAME.PRODUCT
+        );
+      });
       throw error;
     }
   }
@@ -112,16 +126,40 @@ class ProductService {
         throw new BadRequestError(`Product not found with id: ${id}`);
       }
 
+      // Beacause use soft delete, so we don't need to delete the images from Cloudinary
       // Delete all product images from Cloudinary
-      const imageUrls = existingProduct.imageUrls.split(", ");
-      const deletePromises = imageUrls.map((imageUrl: string) =>
-        cloudinaryProvider.deleteImage(imageUrl, CLOUDINARY_FOLDER_NAME.PRODUCT)
-      );
-
-      await Promise.all(deletePromises);
+      // const imageUrls = existingProduct.imageUrls.split(", ");
+      // const deletePromises = imageUrls.map((imageUrl: string) =>
+      //   cloudinaryProvider.deleteImage(imageUrl, CLOUDINARY_FOLDER_NAME.PRODUCT)
+      // );
+      // await Promise.all(deletePromises);
 
       // Delete the product from database
       await productRepository.deleteProduct(id);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async enableProduct(id: number) {
+    try {
+      const product = await productRepository.getProductById(id);
+      if (!product) {
+        throw new BadRequestError(`Product not found with id: ${id}`);
+      }
+      await productRepository.enableProduct(id);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async disableProduct(id: number) {
+    try {
+      const product = await productRepository.getProductById(id);
+      if (!product) {
+        throw new BadRequestError(`Product not found with id: ${id}`);
+      }
+      await productRepository.disableProduct(id);
     } catch (error) {
       throw error;
     }

@@ -1,3 +1,4 @@
+import { UserInfoJwt } from "@/types/user/user.type";
 import shopService from "@services/shopService";
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
@@ -29,6 +30,52 @@ class ShopController {
     }
   };
 
+  getProductsByShopId = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { id } = req.params;
+      const products = await shopService.getProductsByShopId(parseInt(id));
+      res.status(StatusCodes.OK).json({
+        message: "Products fetched successfully!",
+        data: products,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getProductsByShopIdForAdmin = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { id } = req.params;
+      let { page = 1, limit = 10 } = req.query;
+      if (!page) {
+        page = 1;
+      }
+      if (!limit) {
+        limit = 10;
+      }
+      const { email } = req.jwtUser as UserInfoJwt;
+      const products = await shopService.getProductsByShopIdForAdmin(
+        parseInt(id),
+        parseInt(page as string),
+        parseInt(limit as string),
+        email
+      );
+      res.status(StatusCodes.OK).json({
+        message: "Products fetched successfully!",
+        data: products,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
   disableShop = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
