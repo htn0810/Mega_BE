@@ -78,14 +78,27 @@ class UserRepository {
               role: true,
             },
           },
+          shop: true,
         },
       });
 
       if (!user) return null;
 
+      const shop = user?.shop;
+
       return {
         ...user,
         roles: formatRole(user?.roles || []),
+        shop: shop
+          ? {
+              id: shop.id,
+              name: shop.name,
+              description: shop?.description ?? undefined,
+              status: shop.status,
+              avatarUrl: shop?.avatarUrl ?? undefined,
+              coverUrl: shop?.coverUrl ?? undefined,
+            }
+          : undefined,
       };
     } catch (error) {
       throw new Error(error as string);
