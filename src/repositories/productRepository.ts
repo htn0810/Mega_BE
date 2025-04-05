@@ -1,5 +1,6 @@
 import { CreateProductDTO } from "@/types/product/product.type";
 import { GET_DB } from "@configs/database";
+import { Prisma } from "@prisma/client";
 
 class ProductRepository {
   async createProduct(productData: CreateProductDTO) {
@@ -20,7 +21,6 @@ class ProductRepository {
 
       return product;
     } catch (error) {
-      console.error("Product creation failed:", error);
       throw new Error("Failed to create product");
     }
   }
@@ -41,11 +41,37 @@ class ProductRepository {
     }
   }
 
-  async getProducts(page: number = 1, limit: number = 10) {
+  async getProducts(
+    page: number = 1,
+    limit: number = 10,
+    categories: string[],
+    rating: number,
+    minPrice: number,
+    maxPrice: number
+  ) {
     // Input validation
     const validatedPage = Math.max(1, Math.floor(page));
     const validatedLimit = Math.min(50, Math.max(1, Math.floor(limit)));
     const skip = (validatedPage - 1) * validatedLimit;
+
+    const whereClause: Prisma.ProductsWhereInput = {};
+
+    if (categories && categories.length > 0) {
+      const categoryIds = categories.map((category) => parseInt(category));
+      whereClause.categoryId = { in: categoryIds };
+    }
+
+    if (rating) {
+      whereClause.rating = rating;
+    }
+
+    if (minPrice) {
+      whereClause.price = { gte: minPrice };
+    }
+
+    if (maxPrice) {
+      whereClause.price = { lte: maxPrice };
+    }
 
     try {
       const [products, total] = await Promise.all([
@@ -53,8 +79,9 @@ class ProductRepository {
           skip,
           take: validatedLimit,
           orderBy: { id: "desc" },
+          where: whereClause,
         }),
-        GET_DB().products.count(),
+        GET_DB().products.count({ where: whereClause }),
       ]);
 
       return {

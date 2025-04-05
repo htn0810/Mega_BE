@@ -41,9 +41,23 @@ class ProductService {
     }
   }
 
-  async getProducts(page: number, limit: number) {
+  async getProducts(
+    page: number,
+    limit: number,
+    categories: string[],
+    rating: number,
+    minPrice: number,
+    maxPrice: number
+  ) {
     try {
-      const products = await productRepository.getProducts(page, limit);
+      const products = await productRepository.getProducts(
+        page,
+        limit,
+        categories,
+        rating,
+        minPrice,
+        maxPrice
+      );
       return products;
     } catch (error) {
       throw error;
