@@ -44,10 +44,13 @@ class ProductRepository {
   async getProducts(
     page: number = 1,
     limit: number = 10,
-    categories: string[],
+    categoryIds: string[],
     rating: number,
     minPrice: number,
-    maxPrice: number
+    maxPrice: number,
+    bestSelling: boolean,
+    newest: boolean,
+    sortPrice: "asc" | "desc"
   ) {
     // Input validation
     const validatedPage = Math.max(1, Math.floor(page));
@@ -55,14 +58,23 @@ class ProductRepository {
     const skip = (validatedPage - 1) * validatedLimit;
 
     const whereClause: Prisma.ProductsWhereInput = {};
+    const orderByArray: Prisma.ProductsOrderByWithRelationInput[] = [];
 
-    if (categories && categories.length > 0) {
-      const categoryIds = categories.map((category) => parseInt(category));
-      whereClause.categoryId = { in: categoryIds };
+    if (categoryIds && categoryIds.length > 0) {
+      const categoryIdsInt = categoryIds.map((category) => parseInt(category));
+      whereClause.categoryId = { in: categoryIdsInt };
     }
 
     if (rating) {
       whereClause.rating = rating;
+    }
+
+    if (bestSelling) {
+      whereClause.sold = { gte: 100 };
+    }
+
+    if (newest) {
+      orderByArray.push({ createdAt: "desc" });
     }
 
     if (minPrice) {
@@ -73,12 +85,30 @@ class ProductRepository {
       whereClause.price = { lte: maxPrice };
     }
 
+    if (sortPrice) {
+      switch (sortPrice) {
+        case "asc":
+          orderByArray.push({ price: "asc" });
+          break;
+        case "desc":
+          orderByArray.push({ price: "desc" });
+          break;
+        default:
+          break;
+      }
+    }
+
+    // If no sorting criteria was specified, default to sorting by id desc
+    if (orderByArray.length === 0) {
+      orderByArray.push({ id: "desc" });
+    }
+
     try {
       const [products, total] = await Promise.all([
         GET_DB().products.findMany({
           skip,
           take: validatedLimit,
-          orderBy: { id: "desc" },
+          orderBy: orderByArray,
           where: whereClause,
         }),
         GET_DB().products.count({ where: whereClause }),

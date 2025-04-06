@@ -24,18 +24,24 @@ class ProductController {
       const {
         page = 1,
         limit = 10,
-        categories,
+        categoryIds,
         rating,
         minPrice,
         maxPrice,
+        bestSelling,
+        newest,
+        sortPrice,
       } = req.query;
       const products = await productService.getProducts(
         parseInt(page as string),
         parseInt(limit as string),
-        categories as string[],
+        categoryIds?.toString().split(",") || [],
         parseInt(rating as string),
         parseInt(minPrice as string),
-        parseInt(maxPrice as string)
+        parseInt(maxPrice as string),
+        bestSelling === "true",
+        newest === "true",
+        sortPrice as "asc" | "desc"
       );
       res.status(200).json({
         message: "Products fetched successfully",

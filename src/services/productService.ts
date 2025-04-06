@@ -44,19 +44,25 @@ class ProductService {
   async getProducts(
     page: number,
     limit: number,
-    categories: string[],
+    categoryIds: string[],
     rating: number,
     minPrice: number,
-    maxPrice: number
+    maxPrice: number,
+    bestSelling: boolean,
+    newest: boolean,
+    sortPrice: "asc" | "desc"
   ) {
     try {
       const products = await productRepository.getProducts(
         page,
         limit,
-        categories,
+        categoryIds,
         rating,
         minPrice,
-        maxPrice
+        maxPrice,
+        bestSelling,
+        newest,
+        sortPrice
       );
       return products;
     } catch (error) {

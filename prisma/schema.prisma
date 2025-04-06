@@ -118,6 +118,7 @@ model Products {
   isActive Boolean @default(true)
   isDeleted Boolean @default(false)
   rating Float?
+  sold Int @default(0)
   slug String @unique
   shopId Int
   shop Shops @relation(fields: [shopId], references: [id])
