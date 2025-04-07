@@ -77,12 +77,16 @@ class ProductRepository {
       orderByArray.push({ createdAt: "desc" });
     }
 
-    if (minPrice) {
+    if (minPrice && !maxPrice) {
       whereClause.price = { gte: minPrice };
     }
 
-    if (maxPrice) {
+    if (maxPrice && !minPrice) {
       whereClause.price = { lte: maxPrice };
+    }
+
+    if (minPrice && maxPrice) {
+      whereClause.price = { gte: minPrice, lte: maxPrice };
     }
 
     if (sortPrice) {
