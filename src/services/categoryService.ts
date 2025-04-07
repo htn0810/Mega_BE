@@ -32,6 +32,19 @@ class CategoryService {
     }
   }
 
+  async getProductsByCategoryId(id: number) {
+    try {
+      const category = await categoryRepository.getCategoryById(id);
+      if (!category) {
+        throw new BadRequestError("Category not found");
+      }
+      const products = await categoryRepository.getProductsByCategoryId(id);
+      return products;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async createCategory(category: CreateCategoryRequest) {
     try {
       const existingCategory = await categoryRepository.getCategoryByName(
@@ -70,7 +83,6 @@ class CategoryService {
       const newCategory = await categoryRepository.createCategory(cateCreate);
       return newCategory;
     } catch (error) {
-      console.log("🚀 ~ CategoryService ~ createCategory ~ error:", error);
       if (error instanceof BadRequestError) {
         throw error;
       }

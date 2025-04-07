@@ -73,6 +73,18 @@ class CategoryRepository {
     }
   }
 
+  async getProductsByCategoryId(id: number) {
+    try {
+      const products = await GET_DB().products.findMany({
+        where: { categoryId: id },
+        take: 8,
+      });
+      return products;
+    } catch (error) {
+      throw new Error(error as string);
+    }
+  }
+
   async createCategory(category: CreateCategoryDTO) {
     try {
       const newCategory = await GET_DB().categories.create({

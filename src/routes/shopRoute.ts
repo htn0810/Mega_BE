@@ -13,6 +13,10 @@ router
   .route("/:id/products")
   .get(authMiddleware.isAuthorized, shopController.getProductsByShopId);
 
+router
+  .route("/:id")
+  .get(authMiddleware.isAuthorized, shopController.getShopById);
+
 // For Admin
 router
   .route("/admin/:id/products")

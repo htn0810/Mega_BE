@@ -30,6 +30,19 @@ class ShopController {
     }
   };
 
+  getShopById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const shop = await shopService.getShopById(parseInt(id));
+      res.status(StatusCodes.OK).json({
+        message: "Shop fetched successfully!",
+        data: shop,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   getProductsByShopId = async (
     req: Request,
     res: Response,

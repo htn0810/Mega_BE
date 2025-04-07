@@ -14,6 +14,18 @@ class ShopService {
     }
   }
 
+  async getShopById(id: number) {
+    try {
+      const shop = await shopRepository.getShopById(id);
+      if (!shop) {
+        throw new BadRequestError("Shop not found");
+      }
+      return shop;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getProductsByShopId(id: number) {
     try {
       const existingShop = await shopRepository.getShopById(id);

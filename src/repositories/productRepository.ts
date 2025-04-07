@@ -33,10 +33,15 @@ class ProductRepository {
     try {
       const product = await GET_DB().products.findUnique({
         where: { id: productId },
+        include: {
+          shop: true,
+          category: true,
+        },
       });
 
       return product;
     } catch (error) {
+      console.log("🚀 ~ ProductRepository ~ getProductById ~ error:", error);
       throw new Error("Failed to fetch product");
     }
   }

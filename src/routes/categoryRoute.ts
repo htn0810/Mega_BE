@@ -26,4 +26,6 @@ router
   )
   .delete(authMiddleware.isAuthorized, categoryController.deleteCategory);
 
+router.route("/:id/products").get(categoryController.getProductsByCategoryId);
+
 export const CATEGORY_ROUTER = router;

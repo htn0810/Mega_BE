@@ -47,6 +47,25 @@ class CategoryController {
     }
   }
 
+  async getProductsByCategoryId(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { id } = req.params;
+      const products = await categoryService.getProductsByCategoryId(
+        parseInt(id)
+      );
+      res.status(StatusCodes.OK).json({
+        message: "Get products by category id successfully!",
+        data: products,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async createCategory(req: Request, res: Response, next: NextFunction) {
     try {
       if (req.file) {
