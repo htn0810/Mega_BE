@@ -18,13 +18,9 @@ router
 // router.route("/register").post(authMiddleware.isAuthorized, shopController.registerShop);
 
 // For User
-router
-  .route("/:id/products")
-  .get(authMiddleware.isAuthorized, shopController.getProductsByShopId);
+router.route("/:id/products").get(shopController.getProductsByShopId);
 
-router
-  .route("/:id")
-  .get(authMiddleware.isAuthorized, shopController.getShopById);
+router.route("/:id").get(shopController.getShopById);
 
 // For Admin
 router

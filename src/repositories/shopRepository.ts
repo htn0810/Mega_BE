@@ -1,4 +1,4 @@
-import { Shop, TCreateShopRequest } from "@/types/shop/shop.type";
+import { TCreateShopRequest } from "@/types/shop/shop.type";
 import { GET_DB } from "@configs/database";
 import { Shops, ShopStatus } from "@prisma/client";
 
