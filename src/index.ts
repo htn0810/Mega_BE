@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 import express, { Express } from "express";
 import cors from "cors";
 import { corsConfig } from "@configs/cors";
+import { swaggerDocs } from "@utils/swagger";
 const app: Express = express();
 
 const port = Number(env.PORT) || 3000;
@@ -25,4 +26,6 @@ app.use(exceptionHandler);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://${hostName}:${port}`);
+
+  swaggerDocs(app, port);
 });
