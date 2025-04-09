@@ -6,7 +6,11 @@ class CartRepository {
     include: {
       cartProducts: {
         include: {
-          product: true;
+          product: {
+            include: {
+              shop: true;
+            };
+          };
         };
       };
     };
@@ -17,7 +21,45 @@ class CartRepository {
         include: {
           cartProducts: {
             include: {
-              product: true,
+              product: {
+                include: {
+                  shop: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      return cart;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getCartById(id: number): Promise<Prisma.CartsGetPayload<{
+    include: {
+      cartProducts: {
+        include: {
+          product: {
+            include: {
+              shop: true;
+            };
+          };
+        };
+      };
+    };
+  }> | null> {
+    try {
+      const cart = await GET_DB().carts.findUnique({
+        where: { id },
+        include: {
+          cartProducts: {
+            include: {
+              product: {
+                include: {
+                  shop: true,
+                },
+              },
             },
           },
         },
@@ -81,10 +123,10 @@ class CartRepository {
     }
   }
 
-  async deleteCart(id: number) {
+  async clearCart(id: number) {
     try {
-      const cart = await GET_DB().carts.delete({
-        where: { id },
+      const cart = await GET_DB().cartProducts.deleteMany({
+        where: { cartId: id },
       });
       return cart;
     } catch (error) {

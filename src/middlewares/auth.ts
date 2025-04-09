@@ -1,3 +1,4 @@
+import { UserInfoJwt } from "@/types/user/user.type";
 import { env } from "@configs/environments";
 import { ResourceGoneError } from "@exceptions/ResourceGoneError";
 import { UnauthorizedError } from "@exceptions/UnauthorizedError";
@@ -22,7 +23,11 @@ const isAuthorized = async (
       env.JWT_ACCESS_SIGNATURE_KEY as string
     )) as JwtPayload;
 
-    req.jwtUser = { name: decoded.name, email: decoded.email };
+    req.jwtUser = {
+      id: decoded.id,
+      name: decoded.name,
+      email: decoded.email,
+    };
     next();
   } catch (error: unknown) {
     if (error instanceof Error && error.message.includes("jwt expired")) {

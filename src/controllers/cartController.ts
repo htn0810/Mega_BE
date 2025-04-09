@@ -6,8 +6,8 @@ import { JwtPayload } from "jsonwebtoken";
 class CartController {
   async getCart(req: Request, res: Response, next: NextFunction) {
     try {
-      const { name, email } = req.jwtUser as JwtPayload;
-      const cart = await cartService.getCart(email);
+      const { id: userId } = req.jwtUser as JwtPayload;
+      const cart = await cartService.getCart(userId);
       res.status(StatusCodes.OK).json({
         message: "Get list products in cart successfully!",
         data: cart,
@@ -31,12 +31,13 @@ class CartController {
     }
   }
 
-  async deleteCart(req: Request, res: Response, next: NextFunction) {
+  async clearCart(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const cart = await cartService.deleteCart(parseInt(id));
+      const { id: userId } = req.jwtUser as JwtPayload;
+      const cart = await cartService.clearCart(parseInt(id), userId);
       res.status(StatusCodes.OK).json({
-        message: "Delete cart successfully!",
+        message: "Clear cart successfully!",
         data: cart,
       });
     } catch (error) {

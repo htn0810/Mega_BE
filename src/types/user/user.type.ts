@@ -20,6 +20,7 @@ export const UserModel = z.object({
 export type User = z.infer<typeof UserModel>;
 
 export type UserInfoJwt = {
+  id: number;
   email: string;
   name: string;
 };

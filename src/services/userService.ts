@@ -106,10 +106,12 @@ class UserService {
       }
 
       const accessToken = await jwtProvider.generateAccessToken({
+        id: existingUser.id,
         email,
         name: existingUser.name,
       });
       const refreshToken = await jwtProvider.generateRefreshToken({
+        id: existingUser.id,
         email,
         name: existingUser.name,
       });
@@ -139,6 +141,7 @@ class UserService {
       }
 
       const accessToken = await jwtProvider.generateAccessToken({
+        id: existingUser.id,
         email: existingUser.email,
         name: existingUser.name,
       });

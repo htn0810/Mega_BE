@@ -51,23 +51,40 @@ class CartService {
     }
   }
 
-  async getCart(email: string) {
+  async getCart(userId: number) {
     try {
-      const user = await userRepository.getUserByEmail(email);
+      const user = await userRepository.getUserById(userId);
       if (!user) {
         throw new BadRequestError("User not found");
       }
-      const cartInfo = await cartRepository.getCartByUserId(user.id);
-      const formattedCart = await this.formatCart(cartInfo);
+      let cart = await cartRepository.getCartByUserId(user.id);
+      if (!cart) {
+        // Create new cart
+        const createdCart = await cartRepository.createCart(user.id);
+        if (!createdCart) {
+          throw new BadRequestError("Failed to create cart");
+        }
+        cart = await cartRepository.getCartById(createdCart.id);
+      }
+      const formattedCart = await this.formatCart(cart);
       return formattedCart;
     } catch (error) {
       throw error;
     }
   }
 
-  async deleteCart(id: number) {
+  async clearCart(id: number, userId: number) {
     try {
-      const cart = await cartRepository.deleteCart(id);
+      const existingCart = await cartRepository.getCartById(id);
+      if (!existingCart) {
+        throw new BadRequestError("Cart not found");
+      }
+
+      if (existingCart.userId !== userId) {
+        throw new BadRequestError("You are not authorized to clear this cart");
+      }
+
+      const cart = await cartRepository.clearCart(id);
       return cart;
     } catch (error) {
       throw error;
@@ -182,7 +199,11 @@ class CartService {
       include: {
         cartProducts: {
           include: {
-            product: true;
+            product: {
+              include: {
+                shop: true;
+              };
+            };
           };
         };
       };
@@ -205,6 +226,8 @@ class CartService {
       cartProducts: cart.cartProducts.map((item) => ({
         id: item.id,
         productId: item.productId,
+        shopId: item.product.shopId,
+        shopName: item.product.shop.name,
         quantity: item.quantity,
         price: item.product.price,
         name: item.product.name,

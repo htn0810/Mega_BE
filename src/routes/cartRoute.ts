@@ -185,9 +185,9 @@ router
 /**
  * @swagger
  * /carts/{id}:
- *   delete:
- *     summary: Delete cart
- *     description: Delete a cart by ID
+ *    put:
+ *     summary: clear cart
+ *     description: clear a cart by ID
  *     tags: [Carts]
  *     security:
  *       - bearerAuth: []
@@ -200,7 +200,7 @@ router
  *         description: Cart ID
  *     responses:
  *       200:
- *         description: Cart deleted successfully
+ *         description: Cart cleared successfully
  *       401:
  *         description: Not authorized
  *       404:
@@ -208,8 +208,6 @@ router
  *       500:
  *         description: Server error
  */
-router
-  .route("/:id")
-  .delete(authMiddleware.isAuthorized, cartController.deleteCart);
+router.route("/:id").put(authMiddleware.isAuthorized, cartController.clearCart);
 
 export const CART_ROUTER = router;
