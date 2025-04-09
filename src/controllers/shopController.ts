@@ -50,7 +50,12 @@ class ShopController {
   ) => {
     try {
       const { id } = req.params;
-      const products = await shopService.getProductsByShopId(parseInt(id));
+      const { page = 1, limit = 10 } = req.query;
+      const products = await shopService.getProductsByShopId(
+        parseInt(id),
+        parseInt(page as string),
+        parseInt(limit as string)
+      );
       res.status(StatusCodes.OK).json({
         message: "Products fetched successfully!",
         data: products,
@@ -89,6 +94,75 @@ class ShopController {
       next(error);
     }
   };
+
+  updateCoverImage = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { id } = req.params;
+      const coverImage = req.file as Express.Multer.File;
+      const coverUrl = await shopService.updateCoverImage(
+        parseInt(id),
+        coverImage
+      );
+      res.status(StatusCodes.OK).json({
+        message: "Cover image updated successfully!",
+        data: coverUrl,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  updateProfileImage = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { id } = req.params;
+      const profileImage = req.file as Express.Multer.File;
+      const profileUrl = await shopService.updateProfileImage(
+        parseInt(id),
+        profileImage
+      );
+      res.status(StatusCodes.OK).json({
+        message: "Profile image updated successfully!",
+        data: profileUrl,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  createShop = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email } = req.jwtUser as UserInfoJwt;
+      const shop = await shopService.createShop(req.body, email);
+      res.status(StatusCodes.CREATED).json({
+        message: "Shop created successfully!",
+        data: shop,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  updateShop = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const shop = await shopService.updateShop(parseInt(id), req.body);
+      res.status(StatusCodes.OK).json({
+        message: "Shop updated successfully!",
+        data: shop,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   disableShop = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;

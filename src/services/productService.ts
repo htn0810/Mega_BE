@@ -1,7 +1,9 @@
 import { TCreateProductRequest } from "@/types/product/product.type";
 import { BadRequestError } from "@exceptions/BadRequestError";
 import cloudinaryProvider from "@providers/CloudinaryProvider";
+import categoryRepository from "@repositories/categoryRepository";
 import productRepository from "@repositories/productRepository";
+import shopRepository from "@repositories/shopRepository";
 import { CLOUDINARY_FOLDER_NAME } from "@utils/constants";
 
 class ProductService {
@@ -74,6 +76,34 @@ class ProductService {
     try {
       const product = await productRepository.getProductById(id);
       return product;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getProductsByShopIdAndCategoryId(
+    id: number,
+    categoryId: number,
+    page: number,
+    limit: number
+  ) {
+    try {
+      const shop = await shopRepository.getShopById(id);
+      if (!shop) {
+        throw new BadRequestError(`Shop not found with id: ${id}`);
+      }
+      const category = await categoryRepository.getCategoryById(categoryId);
+      if (!category) {
+        throw new BadRequestError(`Category not found with id: ${categoryId}`);
+      }
+
+      const products = await productRepository.getProductsByShopIdAndCategoryId(
+        id,
+        categoryId,
+        page,
+        limit
+      );
+      return products;
     } catch (error) {
       throw error;
     }

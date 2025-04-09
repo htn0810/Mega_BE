@@ -65,6 +65,29 @@ class ProductController {
     }
   }
 
+  async getProductsByShopIdAndCategoryId(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { id, categoryId } = req.params;
+      const { page = 1, limit = 10 } = req.query;
+      const products = await productService.getProductsByShopIdAndCategoryId(
+        parseInt(id),
+        parseInt(categoryId),
+        parseInt(page as string),
+        parseInt(limit as string)
+      );
+      res.status(200).json({
+        message: "Products fetched successfully",
+        data: products,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async updateProduct(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;

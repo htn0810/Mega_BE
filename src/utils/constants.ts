@@ -10,6 +10,7 @@ export const CLOUDINARY_FOLDER_NAME = {
   CATEGORY: "categories",
   PRODUCT: "products",
   USER: "users",
+  SHOP: "shops",
 };
 
 export const USER_ROLE_ID = 1;

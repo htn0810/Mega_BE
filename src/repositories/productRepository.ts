@@ -41,7 +41,6 @@ class ProductRepository {
 
       return product;
     } catch (error) {
-      console.log("🚀 ~ ProductRepository ~ getProductById ~ error:", error);
       throw new Error("Failed to fetch product");
     }
   }
@@ -134,6 +133,50 @@ class ProductRepository {
       };
     } catch (error) {
       throw new Error("Failed to fetch products");
+    }
+  }
+
+  async getProductsByShopIdAndCategoryId(
+    id: number,
+    categoryId: number,
+    page: number,
+    limit: number
+  ) {
+    try {
+      const validatedPage = Math.max(1, Math.floor(page));
+      const validatedLimit = Math.min(50, Math.max(1, Math.floor(limit)));
+      const skip = (validatedPage - 1) * validatedLimit;
+      const [products, total] = await Promise.all([
+        GET_DB().products.findMany({
+          where: {
+            shopId: id,
+            categoryId: categoryId,
+            isDeleted: false,
+            isActive: true,
+          },
+          skip,
+          take: validatedLimit,
+        }),
+        GET_DB().products.count({
+          where: {
+            shopId: id,
+            categoryId: categoryId,
+            isDeleted: false,
+            isActive: true,
+          },
+        }),
+      ]);
+      return {
+        products: products,
+        pagination: {
+          page: validatedPage,
+          limit: validatedLimit,
+          total: total,
+          totalPages: Math.ceil(total / validatedLimit),
+        },
+      };
+    } catch (error) {
+      throw error;
     }
   }
 

@@ -59,7 +59,7 @@ enum ShopStatus {
 
 model Shops {
   id Int @id @default(autoincrement())
-  name String
+  name String @unique
   avatarUrl String?
   coverUrl String?
   description String?

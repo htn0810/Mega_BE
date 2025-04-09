@@ -26,6 +26,10 @@ router
   .delete(productController.deleteProduct);
 
 router
+  .route("/shops/:id/categories/:categoryId")
+  .get(productController.getProductsByShopIdAndCategoryId);
+
+router
   .route("/disable/:id")
   .put(authMiddleware.isAuthorized, productController.disableProduct);
 router
