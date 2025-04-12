@@ -4,9 +4,9 @@ import cartRepository from "@repositories/cartRepository";
 import userRepository from "@repositories/userRepository";
 
 class CartService {
-  async addToCart(email: string, productId: number, quantity: number) {
+  async addToCart(userId: number, productId: number, quantity: number) {
     try {
-      const user = await userRepository.getUserByEmail(email);
+      const user = await userRepository.getUserById(userId);
       if (!user) {
         throw new BadRequestError("User not found");
       }
@@ -19,7 +19,9 @@ class CartService {
         // Create new cart product
         await cartRepository.createCartProduct(newCart.id, productId, quantity);
 
-        return await cartRepository.getCartByUserId(user.id);
+        const cartInfo = await cartRepository.getCartByUserId(user.id);
+        const formattedCart = await this.formatCart(cartInfo);
+        return formattedCart;
       }
 
       // Existing cart, check if product already in cart
@@ -31,10 +33,12 @@ class CartService {
         // Update quantity
         const updatedCart = await cartRepository.updateCartProduct(
           cart.id,
-          productInCart.id,
-          productInCart.quantity + 1
+          productInCart.productId,
+          productInCart.quantity + quantity
         );
-        return updatedCart;
+        const cartInfo = await cartRepository.getCartByUserId(user.id);
+        const formattedCart = await this.formatCart(cartInfo);
+        return formattedCart;
       }
 
       // Add new product to cart
@@ -91,9 +95,9 @@ class CartService {
     }
   }
 
-  async increaseProductQuantity(email: string, productId: number) {
+  async increaseProductQuantity(userId: number, productId: number) {
     try {
-      const user = await userRepository.getUserByEmail(email);
+      const user = await userRepository.getUserById(userId);
       if (!user) {
         throw new BadRequestError("User not found");
       }
@@ -128,9 +132,9 @@ class CartService {
     }
   }
 
-  async decreaseProductQuantity(email: string, productId: number) {
+  async decreaseProductQuantity(userId: number, productId: number) {
     try {
-      const user = await userRepository.getUserByEmail(email);
+      const user = await userRepository.getUserById(userId);
       if (!user) {
         throw new BadRequestError("User not found");
       }
@@ -161,9 +165,9 @@ class CartService {
     }
   }
 
-  async removeProductFromCart(email: string, productId: number) {
+  async removeProductFromCart(userId: number, productId: number) {
     try {
-      const user = await userRepository.getUserByEmail(email);
+      const user = await userRepository.getUserById(userId);
       if (!user) {
         throw new BadRequestError("User not found");
       }
@@ -186,6 +190,38 @@ class CartService {
       await cartRepository.deleteProductFromCart(cart.id, productId);
 
       // Get updated cart
+      const cartInfo = await cartRepository.getCartByUserId(user.id);
+      const formattedCart = await this.formatCart(cartInfo);
+      return formattedCart;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async removeAllProductsOfShop(userId: number, shopId: number) {
+    try {
+      const user = await userRepository.getUserById(userId);
+      if (!user) {
+        throw new BadRequestError("User not found");
+      }
+
+      const cart = await cartRepository.getCartByUserId(user.id);
+      if (!cart) {
+        throw new BadRequestError("Cart not found");
+      }
+
+      const productsBelongToShop = cart.cartProducts.filter(
+        (item) => item.product.shopId === shopId
+      );
+
+      if (productsBelongToShop.length === 0) {
+        throw new BadRequestError("No products found in cart");
+      }
+
+      const cartProductIds = productsBelongToShop.map((item) => item.productId);
+
+      await cartRepository.deleteProductsOfShop(cart.id, cartProductIds);
+
       const cartInfo = await cartRepository.getCartByUserId(user.id);
       const formattedCart = await this.formatCart(cartInfo);
       return formattedCart;

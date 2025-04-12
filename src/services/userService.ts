@@ -133,9 +133,7 @@ class UserService {
         env.JWT_REFRESH_SIGNATURE_KEY as string
       )) as JwtPayload;
 
-      const existingUser = await userRepository.getUserByEmail(
-        decodedToken.email
-      );
+      const existingUser = await userRepository.getUserById(decodedToken.id);
       if (!existingUser) {
         throw new BadRequestError("Refresh token is invalid!");
       }

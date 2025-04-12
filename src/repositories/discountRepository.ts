@@ -73,7 +73,6 @@ class DiscountRepository {
 
       return newDiscount;
     } catch (error) {
-      console.log("🚀 ~ DiscountRepository ~ createDiscount ~ error:", error);
       throw error;
     }
   }

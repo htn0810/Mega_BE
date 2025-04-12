@@ -6,8 +6,8 @@ import { JwtPayload } from "jsonwebtoken";
 class AddressController {
   async getAllAddresses(req: Request, res: Response, next: NextFunction) {
     try {
-      const { name, email } = req.jwtUser as JwtPayload;
-      const addresses = await addressService.getAllAddresses(email);
+      const { id: userId } = req.jwtUser as JwtPayload;
+      const addresses = await addressService.getAllAddresses(userId);
       res.status(StatusCodes.OK).json({
         message: "Addresses fetched successfully",
         data: addresses,
@@ -19,8 +19,8 @@ class AddressController {
 
   async createAddress(req: Request, res: Response, next: NextFunction) {
     try {
-      const { name, email } = req.jwtUser as JwtPayload;
-      const address = await addressService.createAddress(email, req.body);
+      const { id: userId } = req.jwtUser as JwtPayload;
+      const address = await addressService.createAddress(userId, req.body);
       res.status(StatusCodes.CREATED).json({
         message: "Address created successfully",
         data: address,
@@ -83,9 +83,9 @@ class AddressController {
   async updateAddress(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const { name, email } = req.jwtUser as JwtPayload;
+      const { id: userId } = req.jwtUser as JwtPayload;
       const address = await addressService.updateAddress(
-        email,
+        userId,
         parseInt(id),
         req.body
       );

@@ -184,6 +184,38 @@ router
 
 /**
  * @swagger
+ * /carts/remove-products/{shopId}:
+ *   post:
+ *     summary: Remove all products of a shop from cart
+ *     description: Remove all products of a shop from the current user's cart
+ *     tags: [Carts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: shopId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Shop ID
+ *     responses:
+ *       200:
+ *         description: All products of the shop removed from cart successfully
+ *       400:
+ *         description: Invalid input
+ *       401:
+ *         description: Not authorized
+ *       404:
+ *         description: Shop not found in cart
+ *       500:
+ *         description: Server error
+ */
+router
+  .route("/remove-products/:shopId")
+  .post(authMiddleware.isAuthorized, cartController.removeAllProductsOfShop);
+
+/**
+ * @swagger
  * /carts/{id}:
  *    put:
  *     summary: clear cart

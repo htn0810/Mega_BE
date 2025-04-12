@@ -78,6 +78,8 @@ class UserRepository {
               role: true,
             },
           },
+          carts: true,
+          addresses: true,
           shop: true,
         },
       });
@@ -105,10 +107,10 @@ class UserRepository {
     }
   }
 
-  async getShopByUserEmail(email: string) {
+  async getShopByUserId(userId: number) {
     try {
       const user = await GET_DB().users.findUnique({
-        where: { email },
+        where: { id: userId },
         include: {
           shop: true,
         },

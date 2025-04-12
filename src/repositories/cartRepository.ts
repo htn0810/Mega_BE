@@ -218,6 +218,17 @@ class CartRepository {
       throw error;
     }
   }
+
+  async deleteProductsOfShop(cartId: number, productIds: number[]) {
+    try {
+      const cartProducts = await GET_DB().cartProducts.deleteMany({
+        where: { cartId, productId: { in: productIds } },
+      });
+      return cartProducts;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 const cartRepository = new CartRepository();

@@ -51,14 +51,14 @@ class ShopService {
     id: number,
     page: number,
     limit: number,
-    email: string
+    userId: number
   ) {
     try {
       const existingShop = await shopRepository.getShopById(id);
       if (!existingShop) {
         throw new BadRequestError("Shop not found");
       }
-      const userShop = await userRepository.getShopByUserEmail(email);
+      const userShop = await userRepository.getShopByUserId(userId);
       if (!userShop || userShop.id !== existingShop.id) {
         throw new ForbiddenError("Not have permission to access this shop");
       }
@@ -137,9 +137,9 @@ class ShopService {
     }
   }
 
-  async createShop(shop: TCreateShopRequest, email: string) {
+  async createShop(shop: TCreateShopRequest, userId: number) {
     try {
-      const user = await userRepository.getUserByEmail(email);
+      const user = await userRepository.getUserById(userId);
       if (!user) {
         throw new BadRequestError("User not found");
       }

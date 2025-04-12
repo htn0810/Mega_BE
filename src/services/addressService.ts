@@ -7,9 +7,9 @@ import userRepository from "@repositories/userRepository";
 import wardRepository from "@repositories/wardRepository";
 
 class AddressService {
-  async getAllAddresses(email: string) {
+  async getAllAddresses(userId: number) {
     try {
-      const user = await userRepository.getUserByEmail(email);
+      const user = await userRepository.getUserById(userId);
       if (!user) {
         throw new Error("User not found");
       }
@@ -20,9 +20,9 @@ class AddressService {
     }
   }
 
-  async createAddress(email: string, address: Address) {
+  async createAddress(userId: number, address: Address) {
     try {
-      const user = await userRepository.getUserByEmail(email);
+      const user = await userRepository.getUserById(userId);
       if (!user) {
         throw new Error("User not found");
       }
@@ -86,10 +86,10 @@ class AddressService {
     }
   }
 
-  async updateAddress(email: string, id: number, address: Address) {
+  async updateAddress(userId: number, id: number, address: Address) {
     try {
       await this.checkAddress(address);
-      const user = await userRepository.getUserByEmail(email);
+      const user = await userRepository.getUserById(userId);
       if (!user) {
         throw new BadRequestError("User not found");
       }

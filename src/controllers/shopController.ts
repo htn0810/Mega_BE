@@ -79,12 +79,12 @@ class ShopController {
       if (!limit) {
         limit = 10;
       }
-      const { email } = req.jwtUser as UserInfoJwt;
+      const { id: userId } = req.jwtUser as UserInfoJwt;
       const products = await shopService.getProductsByShopIdForAdmin(
         parseInt(id),
         parseInt(page as string),
         parseInt(limit as string),
-        email
+        userId
       );
       res.status(StatusCodes.OK).json({
         message: "Products fetched successfully!",
@@ -139,8 +139,8 @@ class ShopController {
 
   createShop = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email } = req.jwtUser as UserInfoJwt;
-      const shop = await shopService.createShop(req.body, email);
+      const { id: userId } = req.jwtUser as UserInfoJwt;
+      const shop = await shopService.createShop(req.body, userId);
       res.status(StatusCodes.CREATED).json({
         message: "Shop created successfully!",
         data: shop,
