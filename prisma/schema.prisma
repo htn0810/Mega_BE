@@ -14,12 +14,18 @@ generator client {
 //   url      = env("DATABASE_URL")
 // }
 
-// Supabase PostgreSQL configuration
+// PostgreSQL configuration (commented out)
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
+
+// Supabase PostgreSQL configuration
+// datasource db {
+//   provider  = "postgresql"
+//   url       = env("DATABASE_URL")
+//   directUrl = env("DIRECT_URL")
+// }
 
 model Categories {
   id Int @id @default(autoincrement())
@@ -43,11 +49,21 @@ model Users {
   addresses Addresses[]
   roles UserRoles[]
   carts Carts[]
+  followedShops ShopFollowers[]
   isDeleted Boolean @default(false)
   verifyToken String?
   isVerified Boolean @default(false)
+  chatStatus ChatStatus @default(OFFLINE)
+  lastOnline DateTime?
+  conversations ConversationParticipants[]
+  messages Message[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum ChatStatus {
+  ONLINE
+  OFFLINE
 }
 
 enum ShopStatus {
@@ -68,8 +84,46 @@ model Shops {
   status ShopStatus @default(PENDING)
   products Products[]
   discounts Discounts[]
+  followers ShopFollowers[]
+  chatStatus ChatStatus @default(OFFLINE)
+  lastOnline DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Conversation {
+  id Int @id @default(autoincrement())
+  participants ConversationParticipants[]
+  messages Message[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ConversationParticipants {
+  id Int @id @default(autoincrement())
+  userId Int
+  conversationId Int
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+  user Users @relation(fields: [userId], references: [id])
+  @@unique([conversationId, userId])
+}
+
+model Message {
+  id Int @id @default(autoincrement())
+  conversationId Int
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+  senderId Int
+  sender Users @relation(fields: [senderId], references: [id])
+
+  content String?
+  type MessageType
+  read Boolean @default(false)
+  createdAt DateTime @default(now())
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
 }
 
 model Roles {
@@ -280,4 +334,16 @@ model Wards {
 
   @@index([district_code], map: "idx_wards_district")
   @@index([administrative_unit_id], map: "idx_wards_unit")
+}
+
+model ShopFollowers {
+  userId Int
+  user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shopId Int
+  shop Shops @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, shopId])
+  @@index([shopId], name: "shop_followers_shop_id")
+  @@index([userId], name: "shop_followers_user_id")
 }

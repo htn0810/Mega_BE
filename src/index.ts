@@ -6,10 +6,15 @@ import express, { Express } from "express";
 import cors from "cors";
 import { corsConfig } from "@configs/cors";
 import { swaggerDocs } from "@utils/swagger";
+import { createServer } from "http";
+import { initSocket } from "src/socket/socket";
 const app: Express = express();
 
 const port = Number(env.PORT) || 3000;
 const hostName = env.HOST_NAME || "localhost";
+
+const httpServer = createServer(app);
+const io = initSocket(httpServer);
 
 // Cors config
 app.use(cors(corsConfig));
@@ -24,7 +29,7 @@ app.use("/mega/v1", API_ROUTER);
 
 app.use(exceptionHandler);
 
-app.listen(port, () => {
+httpServer.listen(port, () => {
   console.log(`[server]: Server is running at http://${hostName}:${port}`);
 
   swaggerDocs(app, port);

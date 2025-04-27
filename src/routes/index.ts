@@ -1,6 +1,7 @@
 import { ADDRESS_ROUTER } from "@routes/addressRoute";
 import { CART_ROUTER } from "@routes/cartRoute";
 import { CATEGORY_ROUTER } from "@routes/categoryRoute";
+import { CONVERSATION_ROUTER } from "@routes/conversationRoute";
 import { DISCOUNT_ROUTER } from "@routes/discountRoute";
 import { PRODUCT_ROUTER } from "@routes/productRoute";
 import { SHOP_ROUTER } from "@routes/shopRoute";
@@ -39,5 +40,6 @@ router.use("/carts", CART_ROUTER);
 router.use("/discounts", DISCOUNT_ROUTER);
 router.use("/addresses", ADDRESS_ROUTER);
 router.use("/shops", SHOP_ROUTER);
+router.use("/conversations", CONVERSATION_ROUTER);
 
 export const API_ROUTER = router;
