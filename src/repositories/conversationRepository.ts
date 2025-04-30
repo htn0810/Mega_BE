@@ -12,7 +12,11 @@ class ConversationRepository {
           },
         },
         include: {
-          messages: true,
+          messages: {
+            orderBy: {
+              createdAt: "asc",
+            },
+          },
           participants: {
             include: {
               user: true,
@@ -26,15 +30,38 @@ class ConversationRepository {
     }
   }
 
+  async getConversationByUserId(userId: number) {
+    try {
+      const conversations = await GET_DB().conversation.findMany({
+        where: {
+          participants: {
+            some: { userId },
+          },
+        },
+        include: {
+          participants: {
+            include: {
+              user: {
+                include: {
+                  shop: true,
+                },
+              },
+            },
+          },
+          messages: {
+            orderBy: {
+              createdAt: "asc",
+            },
+          },
+        },
+      });
+      return conversations;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async createConversation(userId: number, otherUserId: number) {
-    console.log(
-      "🚀 ~ ConversationRepository ~ createConversation ~ otherUserId:",
-      otherUserId
-    );
-    console.log(
-      "🚀 ~ ConversationRepository ~ createConversation ~ userId:",
-      userId
-    );
     try {
       const conversation = await GET_DB().conversation.create({
         data: {
@@ -52,10 +79,6 @@ class ConversationRepository {
       });
       return conversation;
     } catch (error) {
-      console.log(
-        "🚀 ~ ConversationRepository ~ createConversation ~ error:",
-        error
-      );
       throw error;
     }
   }

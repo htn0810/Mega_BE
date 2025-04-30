@@ -17,6 +17,25 @@ class ConversationController {
     }
   }
 
+  async getConversationByUserId(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { userId } = req.params;
+      const conversation = await conversationService.getConversationByUserId(
+        Number(userId)
+      );
+      res.status(StatusCodes.OK).json({
+        message: "Get conversation by user id successfully",
+        data: conversation,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async createConversation(req: Request, res: Response, next: NextFunction) {
     try {
       const { id: userId } = req.jwtUser as JwtPayload;

@@ -25,7 +25,6 @@ export const initSocket = (httpServer: Express.Application) => {
           });
           io.emit("statusUpdate", { userId, status });
         } catch (error) {
-          console.log("🚀 ~ socket.on ~ error:", error);
           socket.emit("error", { message: "Set status failed!" });
         }
       }
@@ -66,7 +65,6 @@ export const initSocket = (httpServer: Express.Application) => {
           });
           io.to(`conversation-${conversationId}`).emit("newMessage", message);
         } catch (error) {
-          console.log("🚀 ~ socket.on ~ error:", error);
           socket.emit("error", { message: "Send message failed!" });
         }
       }
@@ -82,11 +80,6 @@ export const initSocket = (httpServer: Express.Application) => {
         conversationId: number;
         senderId: number;
       }) => {
-        console.log(
-          "🚀 ~ socket.on ~ conversationId:",
-          conversationId,
-          senderId
-        );
         socket
           .to(`conversation-${conversationId}`)
           .emit("typing", { senderId });
@@ -118,7 +111,6 @@ export const initSocket = (httpServer: Express.Application) => {
         messageId: number;
         conversationId: number;
       }) => {
-        console.log("🚀 ~ socket.on ~ messageId:", messageId);
         await prisma.message.update({
           where: { id: messageId },
           data: { read: true },

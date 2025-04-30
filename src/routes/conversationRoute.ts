@@ -10,6 +10,13 @@ router
   .get(authMiddleware.isAuthorized, conversationController.getConversations)
   .post(authMiddleware.isAuthorized, conversationController.createConversation);
 
+router
+  .route("/user/:userId")
+  .get(
+    authMiddleware.isAuthorized,
+    conversationController.getConversationByUserId
+  );
+
 // router
 //   .route("/upload-image")
 //   .post(
