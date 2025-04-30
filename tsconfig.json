@@ -15,6 +15,7 @@
       "@providers/*": ["src/providers/*"],
       "@exceptions/*": ["src/exceptions/*"],
       "@validations/*": ["src/validations/*"],
+      "@socket/*": ["src/socket/*"],
       "@/types/*": ["src/types/*"]
     },
     "outDir": "dist",

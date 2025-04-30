@@ -7,7 +7,7 @@ import cors from "cors";
 import { corsConfig } from "@configs/cors";
 import { swaggerDocs } from "@utils/swagger";
 import { createServer } from "http";
-import { initSocket } from "src/socket/socket";
+import { initSocket } from "@socket/socket";
 const app: Express = express();
 
 const port = Number(env.PORT) || 3000;
