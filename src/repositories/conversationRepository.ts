@@ -30,6 +30,29 @@ class ConversationRepository {
     }
   }
 
+  async getConversationById(id: number) {
+    try {
+      const conversation = await GET_DB().conversation.findUnique({
+        where: { id },
+        include: {
+          participants: {
+            include: {
+              user: true,
+            },
+          },
+          messages: {
+            orderBy: {
+              createdAt: "asc",
+            },
+          },
+        },
+      });
+      return conversation;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getConversationByUserId(userId: number) {
     try {
       const conversations = await GET_DB().conversation.findMany({

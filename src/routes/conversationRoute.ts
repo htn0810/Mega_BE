@@ -11,6 +11,10 @@ router
   .post(authMiddleware.isAuthorized, conversationController.createConversation);
 
 router
+  .route("/:id")
+  .get(authMiddleware.isAuthorized, conversationController.getConversationById);
+
+router
   .route("/user/:userId")
   .get(
     authMiddleware.isAuthorized,

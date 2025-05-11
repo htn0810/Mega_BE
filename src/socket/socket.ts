@@ -11,14 +11,20 @@ export const initSocket = (httpServer: Express.Application) => {
     cors: corsConfig,
   });
 
+  // Store timestamp of heartbeat for each user
+  const heartbeats = new Map();
+
   io.on("connection", (socket) => {
     console.log("User connected, bro:", socket.id);
 
-    // Cập nhật trạng thái online
+    // Update user status when they connect
     socket.on(
       "setStatus",
       async ({ userId, status }: { userId: number; status: ChatStatus }) => {
         try {
+          if (status === ChatStatus.OFFLINE) {
+            heartbeats.delete(userId);
+          }
           await prisma.users.update({
             where: { id: userId },
             data: { chatStatus: status, lastOnline: new Date() },
@@ -30,7 +36,7 @@ export const initSocket = (httpServer: Express.Application) => {
       }
     );
 
-    // Tham gia phòng hội thoại
+    // Join conversation room
     socket.on(
       "joinConversation",
       ({ conversationId }: { conversationId: number }) => {
@@ -39,7 +45,38 @@ export const initSocket = (httpServer: Express.Application) => {
       }
     );
 
-    // Gửi tin nhắn
+    // User join room của chính họ khi connect
+    socket.on("registerUser", ({ userId }) => {
+      socket.join(`user-${userId}`);
+      console.log(`User ${userId} joined their room user-${userId}`);
+    });
+
+    // Handle heartbeat
+    socket.on("heartbeat", async ({ userId }) => {
+      heartbeats.set(userId, Date.now());
+      await prisma.users.update({
+        where: { id: userId },
+        data: { chatStatus: ChatStatus.ONLINE, lastOnline: new Date() },
+      });
+    });
+
+    // Check heartbeat timeout each 30s
+    setInterval(async () => {
+      const now = Date.now();
+      for (const [userId, lastPing] of heartbeats) {
+        if (now - lastPing > 60000) {
+          // 60s not ping -> offline
+          await prisma.users.update({
+            where: { id: userId },
+            data: { chatStatus: ChatStatus.OFFLINE, lastOnline: new Date() },
+          });
+          heartbeats.delete(userId);
+          io.emit("statusUpdate", { userId, status: ChatStatus.OFFLINE });
+        }
+      }
+    }, 30000);
+
+    // Send message
     socket.on(
       "sendMessage",
       async ({
@@ -64,6 +101,31 @@ export const initSocket = (httpServer: Express.Application) => {
             },
           });
           io.to(`conversation-${conversationId}`).emit("newMessage", message);
+          const conversation = await prisma.conversation.findUnique({
+            where: { id: conversationId },
+            include: {
+              participants: {
+                select: {
+                  userId: true,
+                },
+              },
+            },
+          });
+
+          if (conversation) {
+            const userIds = conversation.participants.map(
+              (participant) => participant.userId
+            );
+            // Xác định user nhận (người không phải sender)
+            const receiverId =
+              senderId === userIds[0] ? userIds[1] : userIds[0];
+
+            // Gửi thông báo chỉ tới user nhận
+            io.to(`user-${receiverId}`).emit("newMessageNotification", {
+              conversationId,
+              message,
+            });
+          }
         } catch (error) {
           socket.emit("error", { message: "Send message failed!" });
         }
@@ -105,19 +167,32 @@ export const initSocket = (httpServer: Express.Application) => {
     socket.on(
       "readMessage",
       async ({
-        messageId,
+        senderId,
         conversationId,
       }: {
-        messageId: number;
+        senderId: number;
         conversationId: number;
       }) => {
-        await prisma.message.update({
-          where: { id: messageId },
-          data: { read: true },
+        const messagesUnread = await prisma.message.findMany({
+          where: {
+            conversationId,
+            read: false,
+            senderId,
+          },
         });
+
+        await Promise.all(
+          messagesUnread.map(async (message) => {
+            await prisma.message.update({
+              where: { id: message.id },
+              data: { read: true },
+            });
+          })
+        );
+
         io.to(`conversation-${conversationId}`).emit("messageRead", {
-          messageId,
-          read: true,
+          senderId,
+          conversationId,
         });
       }
     );

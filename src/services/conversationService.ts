@@ -16,6 +16,18 @@ class ConversationService {
     }
   }
 
+  async getConversationById(id: number) {
+    try {
+      const conversation = await conversationRepository.getConversationById(id);
+      if (!conversation) {
+        throw new NotFoundError("No conversation found");
+      }
+      return conversation;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getConversationByUserId(userId: number) {
     try {
       const conversation = await conversationRepository.getConversationByUserId(

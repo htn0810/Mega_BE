@@ -17,6 +17,21 @@ class ConversationController {
     }
   }
 
+  async getConversationById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const conversation = await conversationService.getConversationById(
+        Number(id)
+      );
+      res.status(StatusCodes.OK).json({
+        message: "Get conversation by id successfully",
+        data: conversation,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getConversationByUserId(
     req: Request,
     res: Response,
