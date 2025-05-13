@@ -5,6 +5,7 @@ import { ChatStatus, MessageType } from "@prisma/client";
 import { corsConfig } from "@configs/cors";
 
 const prisma = GET_DB();
+const connectedUsers = new Map();
 
 export const initSocket = (httpServer: Express.Application) => {
   const io = new Server(httpServer, {
@@ -15,7 +16,18 @@ export const initSocket = (httpServer: Express.Application) => {
   const heartbeats = new Map();
 
   io.on("connection", (socket) => {
+    const userId = socket.handshake.query.userId;
     console.log("User connected, bro:", socket.id);
+
+    if (connectedUsers.has(userId)) {
+      console.log(
+        `User ${userId} is already connected. Disconnecting previous socket...`
+      );
+      const previousSocket = connectedUsers.get(userId);
+      previousSocket?.disconnect(true);
+    }
+
+    connectedUsers.set(userId, socket);
 
     // Update user status when they connect
     socket.on(
