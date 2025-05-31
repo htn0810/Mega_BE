@@ -154,7 +154,7 @@ class UserController {
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      maxAge: ms("2h" as StringValue),
+      maxAge: ms("15 days" as StringValue),
     });
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
